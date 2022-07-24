@@ -1,6 +1,7 @@
 import constants
 import sqlite3
 import traceback
+from unit import Unit
 
 class DatabaseControllerSQL():
     def __init__(self):
@@ -27,16 +28,24 @@ class DatabaseControllerSQL():
 
     def create_db_if_not_exists(self):
         # Create table if it doesn't exist
-        self.execute('''CREATE TABLE IF NOT EXISTS units(id INTEGER PRIMARY KEY, name TEXT NOT NULL, base_health, INT, min_attack INT, max_attack INT, min_initiative FLOAT, max_initiative FLOAT, price FLOAT)''')
+        self.execute('''CREATE TABLE IF NOT EXISTS units(id INTEGER PRIMARY KEY, name TEXT NOT NULL, base_health, INT, min_attack INT, max_attack INT, min_initiative FLOAT, max_initiative FLOAT, ai_type TEXT, price FLOAT)''')
         
+
+    #SELECT - SQL#
+
+    def select_where(self, select_columns, table_name, where, where_value):
+        select_sql = "SELECT {} FROM {} WHERE {}=?".format(select_columns.lower(),table_name.lower(),where.lower())
+        self.execute(select_sql, (where_value,))
+        return self.cursor.fetchall()
 
     #CREATE - SQL#
 
-    def create_actor(self, name, base_health, min_attack, max_attack, min_initiative, max_initiative, price):
+    def save_unit(self, unit):
         #INSERT OR IGNORE ignores the INSERT if it already exists (if the value we select for has to be unique, like a PRIMARY KEY)
-        create_actor_sql = '''INSERT OR IGNORE INTO units(name, base_health, min_attack, max_attack, min_initiative, max_initiative, price) VALUES (?,?,?,?,?,?,?) '''
-        self.execute(create_actor_sql, (name, base_health, min_attack, max_attack, min_initiative, max_initiative, price,))
+        save_unit_sql = '''INSERT OR IGNORE INTO units(name, base_health, min_attack, max_attack, min_initiative, max_initiative, ai_type, price) VALUES (?,?,?,?,?,?,?,?) '''
+        self.execute(save_unit_sql, (unit._name, unit._base_health, unit._min_attack, unit._max_attack, unit._min_initiative, unit._max_initiative, unit._ai_type, unit.get_price()))
 
-    #RETRIEVE - SQL#
-
-    def get_actor
+    def get_unit_by_name(self, unit_name):
+        fetched_unit = self.select_where("*","actors","name",unit_name)[0]
+        unit = Unit(fetched_unit,)
+        return unit

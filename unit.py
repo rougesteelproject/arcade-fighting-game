@@ -1,7 +1,7 @@
 import math
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative, max_initiative, team, ai_type) -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, team:str = None,) -> None:
         self.is_invalid = False
         
         self.name = name
@@ -14,6 +14,8 @@ class Unit:
 
         self._team = team
         self._ai_type = ai_type
+
+        self._price = price
 
         self._check_validity()
 
@@ -51,8 +53,6 @@ class Unit:
         self._initiative_value = ((math.sqrt(self._max_initiative/self._min_initiative))*self.min_initiative)^1.1
 
     def _set_price(self):
-        price = 0
-
         self._set_attack_value()
 
         self._set_initiative_value()
@@ -64,10 +64,7 @@ class Unit:
         return price
 
     def get_price(self):
-        if not self.is_invalid:
-            return self._price
-        
-        else:
+        if self._price == None:
             print("Tried to get price from a unit with invalid stats.")
-            return None
+        return self._price
             
