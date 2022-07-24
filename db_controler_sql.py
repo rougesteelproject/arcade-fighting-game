@@ -28,7 +28,7 @@ class DatabaseControllerSQL():
 
     def create_db_if_not_exists(self):
         # Create table if it doesn't exist
-        self.execute('''CREATE TABLE IF NOT EXISTS units(id INTEGER PRIMARY KEY, name TEXT NOT NULL, base_health, INT, min_attack INT, max_attack INT, min_initiative FLOAT, max_initiative FLOAT, ai_type TEXT, price FLOAT)''')
+        self.execute('''CREATE TABLE IF NOT EXISTS units(id INTEGER PRIMARY KEY, name TEXT NOT NULL, base_health, INT, min_attack INT, max_attack INT, min_initiative FLOAT, max_initiative FLOAT, ai_type TEXT, price FLOAT, game_version FLOAT)''')
         
 
     #SELECT - SQL#
@@ -42,8 +42,8 @@ class DatabaseControllerSQL():
 
     def save_unit(self, unit):
         #INSERT OR IGNORE ignores the INSERT if it already exists (if the value we select for has to be unique, like a PRIMARY KEY)
-        save_unit_sql = '''INSERT OR IGNORE INTO units(name, base_health, min_attack, max_attack, min_initiative, max_initiative, ai_type, price) VALUES (?,?,?,?,?,?,?,?) '''
-        self.execute(save_unit_sql, (unit._name, unit._base_health, unit._min_attack, unit._max_attack, unit._min_initiative, unit._max_initiative, unit._ai_type, unit.get_price()))
+        save_unit_sql = '''INSERT OR IGNORE INTO units(name, base_health, min_attack, max_attack, min_initiative, max_initiative, ai_type, price, game_version) VALUES (?,?,?,?,?,?,?,?,?) '''
+        self.execute(save_unit_sql, (unit._name, unit._base_health, unit._min_attack, unit._max_attack, unit._min_initiative, unit._max_initiative, unit._ai_type, unit.get_price(), unit.version))
 
     def get_unit_by_name(self, unit_name):
         fetched_unit = self.select_where("*","actors","name",unit_name)[0]

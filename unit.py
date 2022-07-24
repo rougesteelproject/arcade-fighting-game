@@ -1,7 +1,7 @@
 import math
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, team:str = None,) -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, team:str = None, game_version:float = 3) -> None:
         self.is_invalid = False
         
         self.name = name
@@ -14,6 +14,8 @@ class Unit:
 
         self._team = team
         self._ai_type = ai_type
+
+        self.game_version = game_version
 
         self._price = price
 
