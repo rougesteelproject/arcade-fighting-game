@@ -1,9 +1,7 @@
 import math
 
-from zmq import NULL
-
 class Unit:
-    def __init__(self, base_health: int, min_attack: int, max_attack: int, min_initiative, max_initiative, ai_type) -> None:
+    def __init__(self, base_health: int, min_attack: int, max_attack: int, min_initiative, max_initiative, team, ai_type) -> None:
         self.is_invalid = False
         
         self._base_health = base_health
@@ -12,6 +10,7 @@ class Unit:
         self._min_initiative = min_initiative
         self._max_initiative = max_initiative
 
+        self._team = team
         self._ai_type = ai_type
 
         self._check_validity()
@@ -27,7 +26,7 @@ class Unit:
             self._price = self._set_price()
 
         else: 
-            self._price = NULL
+            self._price = None
 
     def _check_validity(self):
         if self._base_health < 1:
@@ -69,4 +68,5 @@ class Unit:
         
         else:
             print("Tried to get price from a unit with invalid stats.")
-            return NULL
+            return None
+            
