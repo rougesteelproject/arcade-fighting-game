@@ -1,9 +1,11 @@
 import math
 
 class Unit:
-    def __init__(self, base_health: int, min_attack: int, max_attack: int, min_initiative, max_initiative, team, ai_type) -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative, max_initiative, team, ai_type) -> None:
         self.is_invalid = False
         
+        self.name = name
+
         self._base_health = base_health
         self._min_attack = min_attack
         self._max_attack = max_attack
@@ -16,13 +18,6 @@ class Unit:
         self._check_validity()
 
         if not self.is_invalid:
-
-            self._set_attack_value()
-
-            self._set_initiative_value()
-
-            self._offensive_power = self._attack_value * self._initiative_value *5
-
             self._price = self._set_price()
 
         else: 
@@ -57,6 +52,12 @@ class Unit:
 
     def _set_price(self):
         price = 0
+
+        self._set_attack_value()
+
+        self._set_initiative_value()
+
+        self._offensive_power = self._attack_value * self._initiative_value *5
 
         price = (2*(self._base_health + self._offensive_power) + 3*(math.sqrt(self._base_health * self._offensive_power) *2))/5
         
