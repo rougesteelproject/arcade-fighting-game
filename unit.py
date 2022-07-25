@@ -1,4 +1,6 @@
 import math
+from random import uniform
+import constants
 
 class Unit:
     def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, team:str = None, game_version:float = 3) -> None:
@@ -69,4 +71,16 @@ class Unit:
         if self._price == None:
             print("Tried to get price from a unit with invalid stats.")
         return self._price
-            
+
+    def combat_init(self):
+        self._current_health = self._base_health
+        self._initiative_bar = 0
+
+    def attack_roll(self):
+        pass
+
+    def roll_initiative(self):
+        n = constants.INITIATIVE_NUMBER_OF_POSIBILITIES
+        x = uniform(0,n)
+        roll = self._min_init * [self._max_init/self._min_init]^(x/n)
+        self._initiative_bar += roll
