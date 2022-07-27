@@ -40,7 +40,7 @@ class DatabaseControllerSQL():
 
     def select_like(self, select_columns, table_name, where_column, like_value):
         select_sql = "SELECT {} FROM {} WHERE {} LIKE \'%{}%\'".format(select_columns, table_name, where_column, like_value)
-        self.execute(select_sql, ())
+        self.execute(select_sql,)
         return self.cursor.fetchall()
 
     #CREATE - SQL#
