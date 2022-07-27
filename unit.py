@@ -5,7 +5,7 @@ import constants
 class Unit:
     def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, team:str = None, game_version:float = 3) -> None:
         self.is_invalid = False
-        
+
         self.name = name
 
         self._base_health = base_health
@@ -15,7 +15,7 @@ class Unit:
         self._max_initiative = max_initiative
 
         self._team = team
-        self._ai_type = ai_type
+        self._ai = self._set_ai(ai_type)
 
         self.game_version = game_version
 
@@ -28,6 +28,8 @@ class Unit:
 
         else: 
             self._price = None
+
+        self.id = 0
 
     def _check_validity(self):
         if self._base_health < 1:
@@ -49,6 +51,11 @@ class Unit:
         if self._min_initiative <= 0:
             print("min initiative must be greater than zero!")
             self.is_invalid = True
+
+    def _set_ai(self, ai_type):
+        if ai_type == 'basic':
+            from ais.basic_ai import BasicAI
+            return BasicAI(self)
         
     def _set_attack_value(self):
         self._attack_value = (self._min_attack + self._max_attack)/2
@@ -72,15 +79,39 @@ class Unit:
             print("Tried to get price from a unit with invalid stats.")
         return self._price
 
+    def set_callback_team(self, callback_team):
+        self.callback_team = callback_team
+
     def combat_init(self):
         self._current_health = self._base_health
         self._initiative_bar = 0
+        self.is_alive = True
 
     def attack_roll(self):
         pass
+
+    def _check_is_alive(self):
+        if self._current_health <= 0:
+            self.is_alive = False
+
+    def take_damage(self, damage):
+        self._current_health -= damage
+
+        self._check_is_alive()
+        
+        if not self.is_alive:
+            self._callback_team.kill_unit(self)
 
     def roll_initiative(self):
         n = constants.INITIATIVE_NUMBER_OF_POSIBILITIES
         x = uniform(0,n)
         roll = self._min_init * [self._max_init/self._min_init]^(x/n)
         self._initiative_bar += roll
+
+    def set_id(self, id):
+        self.id = id
+
+    def do_game_tick(self, targets):
+        damage, target = self._ai.do_game_tick(targets)
+
+        return damage, target

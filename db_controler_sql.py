@@ -38,6 +38,8 @@ class DatabaseControllerSQL():
         self.execute(select_sql, (where_value,))
         return self.cursor.fetchall()
 
+    #TODO select_like
+
     #CREATE - SQL#
 
     def save_unit(self, unit):
@@ -49,3 +51,11 @@ class DatabaseControllerSQL():
         fetched_unit = self.select_where("*","actors","name",unit_name)[0]
         unit = Unit(fetched_unit,)
         return unit
+
+    def get_unit_list_by_name(self, unit_name):
+        #TODO use select_like
+
+        unit_list = []
+
+        return unit_list
+        

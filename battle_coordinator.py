@@ -1,12 +1,55 @@
+from team import Team
+
 class BattleCoordinator():
-    def __init__(self) -> None:
-        self._teams = []
+    def __init__(self, teams) -> None:
+        self._teams = teams
 
-        self._alive_units = []
-        self._dead_units = []
+        self._victor = None
 
-    def add_unit(self, unit, team:int):
-        self._teams[team].append(unit)
+    def _roll_initiative(self):
+        for unit in self._units:
+            unit.roll_initiative()
+
+    def _check_living_units(self):
+        living_units = [unit for unit in [team.living_members for team in self._teams]]
+        return living_units
+
+    def _get_targets(self, attacking_unit):
+        targets = [unit for unit in [team.living_members for team in self._teams if team != attacking_unit.callback_team]]
+        return targets
+
+    def _check_victory(self):
+        potential_winners = self._teams
+        for team in self._teams:
+            if not team.living_members:
+                potential_winners.remove(team)
+        if len(potential_winners) == 1:
+            self._victor = potential_winners[0]
+                
+
+
+
+    def _do_round(self):
+        self._roll_initiative()
+
+        active_units = self._check_living_units()
+        for active_unit in active_units:
+            if active_unit.is_alive and self._victor == None:
+                target_list = self._get_targets(active_unit)
+                damage, target = active_unit.do_game_tick(target_list)
+
+                target.take_damage(damage)
+
+                self._check_victory()
 
     def run_battle(self):
-        pass
+        
+        for team in self._teams:
+            team.combat_init()
+            for unit in team.members:
+                unit.combat_init()
+
+        while self._victor == None:
+            self._do_round()
+
+        print(f'Team \"{self._victor.name}\" has won!')
