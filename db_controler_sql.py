@@ -38,7 +38,10 @@ class DatabaseControllerSQL():
         self.execute(select_sql, (where_value,))
         return self.cursor.fetchall()
 
-    #TODO select_like
+    def select_like(self, select_columns, table_name, where_column, like_value):
+        select_sql = "SELECT {} FROM {} WHERE {} LIKE \'%{}%\'".format(select_columns, table_name, where_column, like_value)
+        self.execute(select_sql)
+        return self.cursor.fetchall()
 
     #CREATE - SQL#
 
@@ -48,14 +51,16 @@ class DatabaseControllerSQL():
         self.execute(save_unit_sql, (unit._name, unit._base_health, unit._min_attack, unit._max_attack, unit._min_initiative, unit._max_initiative, unit._ai_type, unit.get_price(), unit.version))
 
     def get_unit_by_name(self, unit_name):
-        fetched_unit = self.select_where("*","actors","name",unit_name)[0]
+        fetched_unit = self.select_where("*","units","name",unit_name)[0]
         unit = Unit(fetched_unit,)
         return unit
 
     def get_unit_list_by_name(self, unit_name):
-        #TODO use select_like
-
         unit_list = []
+
+        fetched_units = self.select_like("*", "units", "name", unit_name)
+        for unit in fetched_units:
+            unit_list.append(Unit(unit))
 
         return unit_list
         
