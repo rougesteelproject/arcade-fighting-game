@@ -32,11 +32,11 @@ class BattleCoordinator():
     def _do_round(self):
         self._roll_initiative()
 
-        active_units = self._check_living_units()
+        active_units = sorted(self._check_living_units(), key=lambda active_unit: active_unit.get_initiative_bar())
         for active_unit in active_units:
-            if active_unit.is_alive and self._victor == None:
+            if active_unit.is_alive and self._victor == None and active_unit.get_initiative_bar() >= self._initiative_threshold:
                 target_list = self._get_targets(active_unit)
-                damage, target = active_unit.do_game_tick(target_list)
+                damage, target = active_unit.do_game_tick(target_list, initiative_threshold)
 
                 target.take_damage(damage)
 
@@ -48,6 +48,8 @@ class BattleCoordinator():
             team.combat_init()
             for unit in team.members:
                 unit.combat_init()
+
+        self._initiative_threshold = max([unit.get_max_initiative for unit in self._check_living_units])
 
         while self._victor == None:
             self._do_round()

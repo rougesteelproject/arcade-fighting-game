@@ -1,5 +1,6 @@
 import math
-from random import uniform
+from random import randint, uniform
+from shutil import register_unpack_format
 import constants
 
 class Unit:
@@ -57,6 +58,9 @@ class Unit:
             from ais.basic_ai import BasicAI
             return BasicAI(self)
         
+    def get_max_initiative(self):
+        return self._max_initiative
+
     def _set_attack_value(self):
         self._attack_value = (self._min_attack + self._max_attack)/2
 
@@ -87,8 +91,11 @@ class Unit:
         self._initiative_bar = 0
         self.is_alive = True
 
+    def get_initiative_bar(self):
+        return self._initiative_bar
+
     def attack_roll(self):
-        pass
+        return randint(self._mix_attack, self._max_attack)
 
     def _check_is_alive(self):
         if self._current_health <= 0:
@@ -111,7 +118,9 @@ class Unit:
     def set_id(self, id):
         self.id = id
 
-    def do_game_tick(self, targets):
+    def do_game_tick(self, targets, initiative_threshold):
         damage, target = self._ai.do_game_tick(targets)
+
+        self._initiative_bar -= initiative_threshold
 
         return damage, target
