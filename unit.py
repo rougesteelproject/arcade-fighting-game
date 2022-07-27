@@ -18,7 +18,7 @@ class Unit:
         self._team = team
         self._ai = self._set_ai(ai_type)
 
-        self.game_version = game_version
+        self._game_version = game_version
 
         self._price = price
 

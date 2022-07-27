@@ -30,7 +30,7 @@ class GameLoop():
 
             if selection == 0:
                 self._unit_creator = UnitCreator()
-                self._unit_creator.get_input_unit_stats()
+                self._unit_creator.save_unit_to_db(self._unit_creator.get_input_unit_stats())
 
             elif selection == 1:
                 try:

@@ -5,6 +5,8 @@ class AI():
     def __init__(self, callback_unit) -> None:
         self._callback_unit = callback_unit
 
+        self.name = "ai_class"
+
     def _update_target_list(self, targets):
         self._target_list = targets
     

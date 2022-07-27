@@ -22,7 +22,7 @@ class Menu():
                     selection_invalid = False
                     return selection_index
 
-            except:
-                traceback.print_exception()
+            except ValueError:
+                print("Tried to input a non-integer as a selection")
                 selection_invalid = True
 

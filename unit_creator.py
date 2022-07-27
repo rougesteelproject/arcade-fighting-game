@@ -33,7 +33,7 @@ class UnitCreator():
             print("Max initiative must be greater than min!")
             max_initiative = float(input("Max Initiative: "))
 
-        return Unit(name, base_health, min_attack, max_attack, min_initiative, max_initiative, ai_type= "basic",)
+        return Unit(name, base_health, min_attack, max_attack, min_initiative, max_initiative, ai_type= "basic")
 
     def save_unit_to_db(self, unit):
         if not unit.is_invalid:
@@ -41,15 +41,3 @@ class UnitCreator():
 
     def get_unit_from_db_by_name(self, unit_name):
         self._db_controller.get_unit_by_name(unit_name)
-
-
-def test():
-    uc = UnitCreator()
-
-    the_weakest_thing = Unit(name="The weakest thing", base_health=1, min_attack=0, max_attack=0, min_initiative=0, max_initiative=0, ai_type="none")
-
-    print(the_weakest_thing.get_price())
-
-    uc.save_unit_to_db(uc.get_input_unit_stats())
-
-    uc.get_unit_from_db_by_name(input('Name to retreive from database: '))
