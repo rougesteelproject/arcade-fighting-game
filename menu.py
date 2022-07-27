@@ -8,16 +8,15 @@ class Menu():
         #Options should be a list of functions
 
     def get_selection(self):
-        print(self._menu_name)
+        print(self._name)
 
         selection_invalid = True
 
         while selection_invalid:
-            print(self._prompt)
-            print(f'select a number from 0 to {self._number_of_options - 1}')
-
             try:
+                print(f'select a number from 0 to {self._number_of_options - 1}')
                 selection_index = int(input(f'{self._prompt}'))
+
 
                 if selection_index in range(0, self._number_of_options - 1):
                     selection_invalid = False

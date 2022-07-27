@@ -65,7 +65,7 @@ class Unit:
         self._attack_value = (self._min_attack + self._max_attack)/2
 
     def _set_initiative_value(self):
-        self._initiative_value = ((math.sqrt(self._max_initiative/self._min_initiative))*self.min_initiative)^1.1
+        self._initiative_value = ((math.sqrt(self._max_initiative/self._min_initiative))*self._min_initiative)**1.1
 
     def _set_price(self):
         self._set_attack_value()
@@ -112,7 +112,7 @@ class Unit:
     def roll_initiative(self):
         n = constants.INITIATIVE_NUMBER_OF_POSIBILITIES
         x = uniform(0,n)
-        roll = self._min_init * [self._max_init/self._min_init]^(x/n)
+        roll = self._min_init * [self._max_init/self._min_init]**(x/n)
         self._initiative_bar += roll
 
     def set_id(self, id):

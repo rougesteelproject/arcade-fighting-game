@@ -1,5 +1,4 @@
-import imp
-from ai import AI
+from ais.ai import AI
 
 class BasicAI(AI):
     def __init__(self, callback_unit) -> None:

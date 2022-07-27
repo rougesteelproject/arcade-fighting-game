@@ -5,7 +5,7 @@ class UnitCreator():
     def __init__(self) -> None:
         self._db_controller = DatabaseControllerSQL()
 
-    def get_input_unit_stats():
+    def get_input_unit_stats(self):
         name = input("Unit name: ")
         
         base_health = 0

@@ -81,7 +81,8 @@ class BattleCreator():
 
         while loop:
 
-            prompt = """0: Add team
+            prompt = """
+            0: Add team
             1: Search for a unit to add
             2: Sell a unit:
             3: Play the Battle!
@@ -97,7 +98,7 @@ class BattleCreator():
                 loop = False
 
             elif selection == 1:
-                name = input("Unit Name \(Search\): ")
+                name = input("Unit Name (Search): ")
                 self._search_and_buy_units_by_name(name)
 
             elif selection == 2:
