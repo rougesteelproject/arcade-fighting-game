@@ -1,10 +1,9 @@
 import math
 from random import randint, uniform
-from shutil import register_unpack_format
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, game_version:float = 3) -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, game_version:float = 3, attack_verb:str = "attacked") -> None:
         self.is_invalid = False
 
         self.name = name
@@ -14,6 +13,8 @@ class Unit:
         self._max_attack = max_attack
         self._min_initiative = min_initiative
         self._max_initiative = max_initiative
+
+        self.attack_verb = attack_verb
 
         self._ai = self._set_ai(ai_type)
 
@@ -106,6 +107,7 @@ class Unit:
         self._check_is_alive()
         
         if not self.is_alive:
+            print(f'{self.name} has died.')
             self._callback_team.kill_unit(self)
 
     def roll_initiative(self):
