@@ -1,0 +1,1 @@
+{"name": "Sugar Ant", "base_health": 5, "min_attack": 0, "max_attack": 1, "min_initiative": 0.9, "max_initiative": 1.2, "ai_type": "basic", "game_version": 3, "price": 7.376627286691051, "attack_verb": "attacked"}

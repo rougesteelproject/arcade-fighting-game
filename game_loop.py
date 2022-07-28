@@ -1,4 +1,3 @@
-import imp
 from battle_creator import BattleCreator
 from unit_creator import UnitCreator
 from battle_coordinator import BattleCoordinator

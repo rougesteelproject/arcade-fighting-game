@@ -95,7 +95,7 @@ class Unit:
         return self._initiative_bar
 
     def attack_roll(self):
-        return randint(self._mix_attack, self._max_attack)
+        return randint(self._min_attack, self._max_attack)
 
     def _check_is_alive(self):
         if self._current_health <= 0:
@@ -107,13 +107,13 @@ class Unit:
         self._check_is_alive()
         
         if not self.is_alive:
-            print(f'{self.name} has died.')
-            self._callback_team.kill_unit(self)
+            print(f'{self.name} on team {self.callback_team.name} has died.')
+            self.callback_team.kill_unit(self)
 
     def roll_initiative(self):
         n = constants.INITIATIVE_NUMBER_OF_POSIBILITIES
         x = uniform(0,n)
-        roll = self._min_init * [self._max_init/self._min_init]**(x/n)
+        roll = self._min_initiative * (self._max_initiative/self._min_initiative)**(x/n)
         self._initiative_bar += roll
 
     def set_id(self, id):

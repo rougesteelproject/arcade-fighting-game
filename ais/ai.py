@@ -1,4 +1,4 @@
-from random import randint
+from random import choice
 
 
 class AI():
@@ -11,7 +11,7 @@ class AI():
         self._target_list = targets
     
     def _select_target(self):
-        target = self._target_list[randint(0, len(self._target_list))]
+        target = choice(self._target_list)
         return target
 
     def _attack(self):

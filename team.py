@@ -12,14 +12,17 @@ class Team():
         self.members.remove(unit)
 
     def kill_unit(self, unit):
-        if unit in self.members & unit in self.alive_members:
+        if unit in self.members and unit in self._living_members:
             self.dead_members.append(unit)
-            self.living_members.remove(unit)
+            self._living_members.remove(unit)
+
+    def get_living_members(self):
+        return self._living_members
 
     def buy(self, unit):
-        if self.money >= unit.price:
+        if self.money >= unit.get_price():
             self._add_unit(unit)
-            self.money -= unit.price
+            self.money -= unit.get_price()
             
         else:
             print("Insufficient money.")
@@ -27,8 +30,28 @@ class Team():
     def sell(self, unit_to_remove):
         if unit_to_remove in self.members:
             self._remove_unit(unit_to_remove)
-        self.money += unit_to_remove.price
+        self.money += unit_to_remove.get_price()
 
     def combat_init(self):
-        self.living_members = self.members
+        self._living_members = self.members
         self.dead_members = []
+
+    def list_members_grouped(self):
+
+        troop_disposition = """"""
+
+        unit_type = ""
+        unit_count = 0
+
+        for unit in self.members:
+            if unit.name != unit_type:
+                unit_type = unit.name
+
+                unit_count = sum(unit.name == unit_type for unit in self.members)
+
+                troop_disposition += f'{unit.name} x {unit_count}'
+                
+
+        return troop_disposition
+
+

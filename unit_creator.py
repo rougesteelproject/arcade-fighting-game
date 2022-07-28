@@ -1,5 +1,5 @@
 from unit import Unit
-from db_controllers.db_controler_sql import DatabaseControllerSQL
+import traceback
 
 class UnitCreator():
     def __init__(self, db_controler) -> None:
@@ -26,7 +26,10 @@ class UnitCreator():
         min_initiative = 0
         while min_initiative <= 0:
             print("min initiative must be greater than zero!")
-            min_initiative = float(input("Minimum Initiative: "))
+            try:
+                min_initiative = float(input("Minimum Initiative: "))
+            except ValueError:
+                traceback.print_exc()
         
         max_initiative = min_initiative -1
         while max_initiative < min_initiative:

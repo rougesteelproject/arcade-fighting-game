@@ -17,8 +17,7 @@ class Menu():
                 print(f'select a number from 0 to {self._number_of_options - 1}')
                 selection_index = int(input(f'{self._prompt}'))
 
-
-                if selection_index in range(0, self._number_of_options - 1):
+                if selection_index in range(self._number_of_options):
                     selection_invalid = False
                     return selection_index
 
