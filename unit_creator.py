@@ -1,9 +1,9 @@
 from unit import Unit
-from db_controler_sql import DatabaseControllerSQL
+from db_controllers.db_controler_sql import DatabaseControllerSQL
 
 class UnitCreator():
-    def __init__(self) -> None:
-        self._db_controller = DatabaseControllerSQL()
+    def __init__(self, db_controler) -> None:
+        self._db_controller = db_controler
 
     def get_input_unit_stats(self):
         name = input("Unit name: ")

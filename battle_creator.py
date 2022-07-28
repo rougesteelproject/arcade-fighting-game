@@ -1,6 +1,6 @@
 from constants import LIMIT_NUMBER_OF_PLAYERS
 from battle_coordinator import BattleCoordinator
-from db_controler_sql import DatabaseControllerSQL
+from db_controllers.db_controler_sql import DatabaseControllerSQL
 from menu import Menu
 from team import Team
 import traceback
@@ -24,27 +24,28 @@ class BattleCreator():
         self._search_bar_units = self._database_controller.get_unit_list_by_name(unit_name=name)
 
         unit_prompt = ""
+        
+        if len(self._search_bar_units) != 0:
+            for index, unit in enumerate(self._search_bar_units):
+                unit_prompt = unit_prompt + f'{index}: {unit.name}: {unit.price} \n'
 
-        for index, unit in enumerate(self._search_bar_units):
-            unit_prompt = unit_prompt + f'{index}: {unit.name}: {unit.price} \n'
+            unit_menu = Menu("Search Results:", unit_prompt, number_of_options=len(self._search_bar_units) + 1)
 
-        unit_menu = Menu("Search Results:", unit_prompt, number_of_options=len(self._search_bar_units) + 1)
+            unit_selection = self._search_bar_units[unit_menu.get_selection()]
 
-        unit_selection = self._search_bar_units[unit_menu.get_selection()]
+            team_prompt = ""
 
-        team_prompt = ""
+            for index, team in enumerate(self._teams):
+                team_prompt = team_prompt + f'{index}: {team.name}'
 
-        for index, team in enumerate(self._teams):
-            team_prompt = team_prompt + f'{index}: {team.name}'
+            team_menu = Menu("Add to which team?", team_prompt, len(self._teams) +1)
 
-        team_menu = Menu("Add to which team?", team_prompt, len(self._teams) +1)
+            team_selection = self._teams[team_menu.get_selection()]
 
-        team_selection = self._teams[team_menu.get_selection()]
-
-        try:
-            team_selection.buy(unit_selection)
-        except:
-            traceback.print_exc()
+            try:
+                team_selection.buy(unit_selection)
+            except:
+                traceback.print_exc()
 
     def _sell_unit(self):
         sell_team_prompt = """Select team to sell from: \n"""

@@ -4,7 +4,7 @@ from shutil import register_unpack_format
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, team:str = None, game_version:float = 3) -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, game_version:float = 3) -> None:
         self.is_invalid = False
 
         self.name = name
@@ -15,7 +15,6 @@ class Unit:
         self._min_initiative = min_initiative
         self._max_initiative = max_initiative
 
-        self._team = team
         self._ai = self._set_ai(ai_type)
 
         self._game_version = game_version
