@@ -1,19 +1,19 @@
 from constants import LIMIT_NUMBER_OF_PLAYERS
-from battle_coordinator import BattleCoordinator
-from db_controllers.db_controler_sql import DatabaseControllerSQL
 from menu import Menu
 from team import Team
+from unit import Unit
 import traceback
 
 class BattleCreator():
     def __init__(self, callback, money_limit) -> None:
-        self._database_controller = DatabaseControllerSQL()
-
+        
         self._callback = callback
+
+        self._database_controller = self._callback._database_controler
 
         self._money_limit = money_limit
 
-        self._search_bar_units = []
+        self._search_bar_units_data = []
 
         self._teams = []
 
@@ -21,17 +21,18 @@ class BattleCreator():
         self._add_team()
 
     def _search_and_buy_units_by_name(self, name):
-        self._search_bar_units = self._database_controller.get_unit_list_by_name(unit_name=name)
+        self._search_bar_units_data = self._database_controller.get_unit_list_by_name(unit_name=name)
 
         unit_prompt = ""
         
-        if len(self._search_bar_units) != 0:
-            for index, unit in enumerate(self._search_bar_units):
-                unit_prompt = unit_prompt + f'{index}: {unit.name}: {unit.price} \n'
+        if len(self._search_bar_units_data) != 0:
+            for index, unit_data in enumerate(self._search_bar_units_data):
+                unit_prompt = unit_prompt + f'{index}: {unit_data["name"]}: {unit_data["price"]} \n'
 
             unit_menu = Menu("Search Results:", unit_prompt, number_of_options=len(self._search_bar_units) + 1)
 
-            unit_selection = self._search_bar_units[unit_menu.get_selection()]
+            unit_data = self._search_bar_units_data[unit_menu.get_selection()]
+            
 
             team_prompt = ""
 
@@ -43,6 +44,7 @@ class BattleCreator():
             team_selection = self._teams[team_menu.get_selection()]
 
             try:
+                unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], price=unit_data['price'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
                 team_selection.buy(unit_selection)
             except:
                 traceback.print_exc()

@@ -2,17 +2,13 @@ import imp
 from battle_creator import BattleCreator
 from unit_creator import UnitCreator
 from battle_coordinator import BattleCoordinator
-from db_controllers.db_controler_sql import DatabaseControllerSQL
-from db_controllers.dummy_db_controler import DummyDB
+from db_controllers.db_controler_json import JSONDB
 from menu import Menu
 import traceback
 
 class GameLoop():
-    def __init__(self, db_type = "dummy") -> None:
-        if db_type == "dummy":
-            self._database_controler = DummyDB()
-        elif db_type == "sql":
-            self._database_controler = DatabaseControllerSQL()
+    def __init__(self) -> None:
+        self._database_controler = JSONDB()
 
     def run(self):
         exit = False
@@ -56,5 +52,5 @@ class GameLoop():
         self._battle_coordinator = BattleCoordinator(teams)
         self._battle_coordinator.run_battle()
 
-gameloop = GameLoop(db_type="dummy")
+gameloop = GameLoop()
 gameloop.run()

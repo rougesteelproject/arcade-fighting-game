@@ -40,4 +40,7 @@ class UnitCreator():
             self._db_controller.save_unit(unit)
 
     def get_unit_from_db_by_name(self, unit_name):
-        self._db_controller.get_unit_by_name(unit_name)
+        unit_data = self._db_controller.get_unit_data_by_name(unit_name)
+        unit = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], price=unit_data['price'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
+
+        return unit
