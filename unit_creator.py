@@ -20,7 +20,7 @@ class UnitCreator():
         
         max_attack = min_attack -1
         while max_attack < min_attack:
-            print("Max attack must be greater than min attack!")
+            print("Max attack must be greater than or equal to min attack!")
             max_attack = int(input("Max Attack: "))
 
         min_initiative = 0
