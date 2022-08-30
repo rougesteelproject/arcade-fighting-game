@@ -62,7 +62,7 @@ class BattleCreator():
             team_selection = self._teams[team_menu.get_selection()]
 
             try:
-                unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], price=unit_data['price'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
+                unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], price_v1=unit_data['price_v1'], price_v2=unit_data['price_v2'], price_v3=unit_data['price_v3'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
                 unit_selection._check_stat_validity()
 
                 if self._game_version == 1 and unit_selection.is_invalid_v1 == False:

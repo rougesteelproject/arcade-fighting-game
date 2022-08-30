@@ -1,6 +1,7 @@
 #TODO replace traceback with whatever I used for RAC
 #TODO a minimalist clickable ui
 #TODO check for bugs
+    #TODO what happens to v1 units trying to calculate v2 or v3 prices when max_init = None ?
 
 # v2 added initiative, v3 added variability
 

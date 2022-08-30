@@ -1,11 +1,9 @@
-
-
 import math
 from random import randint, uniform
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price:int = 0, game_version:float = 3, attack_verb:str = "attacked") -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price_v1:int = None, price_v2:int = None, price_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
 
         self.name = name
 
@@ -32,7 +30,16 @@ class Unit:
 
         self._game_version = game_version
 
-        self._set_prices()
+        if price_v1 == None and self._game_version == 1:
+            self._set_prices()
+        elif price_v2 == None and self._game_version == 2:
+            self._set_prices()
+        elif price_v3 == None and self._game_version == 3:
+            self._set_prices()
+        else:
+            self.price_v1 = price_v1
+            self.price_v2 = price_v2
+            self.price_v3 = price_v3
 
         self.id = 0
 
