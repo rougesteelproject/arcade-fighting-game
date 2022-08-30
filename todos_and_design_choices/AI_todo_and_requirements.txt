@@ -1,5 +1,8 @@
 #TODO have the battle_coordinator hold on to a single copy of each AI type it needs, so individual units don't need to hold them
 #TODO units have a list of AI types in order of priority [eg "swarmer" falls back to "random"]
+#TODO AI can call other AI to change behaviors under certian conditions
+
+#TODO battle_coordinator creates a separate battle_data module so the code's cleaner
 
 *Swarming* needs a target list made of units attacked by the same unit type as it
 This means the coordinator needs to keep track of the names of units that attack other units (a dict?), 

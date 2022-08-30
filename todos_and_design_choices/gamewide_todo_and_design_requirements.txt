@@ -1,4 +1,3 @@
-#TODO replace traceback with whatever I used for RAC
 #TODO a minimalist clickable ui
 #TODO Rename price to RAW POWER before I get too deep in the AI stuff
 #TODO check for bugs
@@ -10,6 +9,7 @@ GAME VERSIONS
 # v2 added initiative, v3 added variability
 
 GAME VERSIONS: FORWARD COMPATIBILITY
+#TODO the original plan was only Backwards compatibility, so we can trim some parts and use v3 units in v2 and v2 in v1
 # v2 units default to min_init = 1 and max_init = init so that v2 units are forward compatible with v3 units
     -- #This will mean 'doormat' 0 init creatures will be invalid for v3 or higher because their max_init will be lower than their min_init
         -- #validity is checked on battle creation, so there won't be any errors

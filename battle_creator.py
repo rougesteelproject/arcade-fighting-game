@@ -2,7 +2,7 @@ from constants import LIMIT_NUMBER_OF_PLAYERS
 from menus.menu_console import MenuConsole as Menu
 from team import Team
 from unit import Unit
-import traceback
+import logging
 
 class BattleCreator():
     def __init__(self, callback, money_limit, game_version) -> None:
@@ -72,7 +72,7 @@ class BattleCreator():
                 elif self._game_version == 3 and unit_selection.is_invalid_v3 == False:
                     team_selection.buy(unit_selection)
             except:
-                traceback.print_exc()
+                logging.exception()
 
     def _sell_unit(self):
         sell_team_prompt = """Select team to sell from: \n"""
@@ -182,7 +182,7 @@ class BattleCreator():
                         try:
                             enable_other_input = input("Please type \'y\' or \'n\': ").lower()
                         except:
-                            traceback.print_exc()
+                            logging.exception()
 
                     if enable_other_input == "y":
                         self._enable_other_version_units = True

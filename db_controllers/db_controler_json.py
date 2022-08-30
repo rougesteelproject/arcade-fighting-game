@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 import simplejson as json
-import traceback
+import logging
 import os
 import fnmatch
 
@@ -27,7 +27,7 @@ class JSONDB():
         
                 json.dump(unit_dict, pack)
         except:
-            traceback.print_exc()
+            logging.exception()
 
     def get_unit_data_by_name(self, unit_name, game_version, enable_other_version_units):
         
@@ -46,7 +46,7 @@ class JSONDB():
                     #this may not be the right aproach. Maybe return None breaks things?
                     
         except:
-            traceback.print_exc()
+            logging.exception()
 
     def get_unit_list_by_name(self, unit_name):
         #a way to search the file names, then load each file
@@ -65,7 +65,7 @@ class JSONDB():
                     unit_data = json.load(unit_json)
                     unit_data_list.append(unit_data)
             except:
-                traceback.print_exc()
+                logging.exception()
 
 
         return unit_data_list

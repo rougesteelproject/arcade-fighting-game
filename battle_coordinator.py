@@ -38,6 +38,7 @@ class BattleCoordinator():
             print(f'Team \"{self._victor.name}\" has won!')
 
     def _do_game_tick(self, unit, game_data):
+        #TODO battle_coordinator imports and uses BattleData
         if unit.ai_type == "basic":
             if self._basic_ai == None:
                 self._basic_ai == BasicAI()

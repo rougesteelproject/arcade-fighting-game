@@ -4,13 +4,15 @@ from unit_creator import UnitCreator
 from battle_coordinator import BattleCoordinator
 from db_controllers.db_controler_json import JSONDB
 from menus.menu_console import MenuConsole as Menu
-import traceback
+import logging
 
 
 
 class GameLoop():
     def __init__(self) -> None:
         self._database_controler = JSONDB()
+
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename= constants.ERROR_LOG_URI, encoding='utf-8', level=logging.ERROR, filemode='w')
 
     def run(self):
         exit = False
@@ -39,7 +41,7 @@ class GameLoop():
                     self._unit_creator = UnitCreator(self._database_controler)
                     self._unit_creator.save_unit_to_db(self._unit_creator.get_input_unit_stats(game_version))
                 except:
-                    traceback.print_exc()
+                    logging.exception()
 
                 
 
@@ -50,7 +52,7 @@ class GameLoop():
                     self._battle_creator = BattleCreator(callback = self, money_limit=money_limit, game_version= game_version)
                     self._create_battle()
                 except:
-                    traceback.print_exc()
+                    logging.exception()
             
             elif selection == 2:
                 exit = True        

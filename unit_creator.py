@@ -1,5 +1,5 @@
 from unit import Unit
-import traceback
+import logging
 
 class UnitCreator():
     def __init__(self, db_controler) -> None:
@@ -17,7 +17,7 @@ class UnitCreator():
             try:
                 base_health = int(input("Base Health: "))
             except ValueError:
-                    traceback.print_exc()
+                    logging.exception()
         
         
         min_attack = -1
@@ -27,14 +27,14 @@ class UnitCreator():
                 try:
                     min_attack = int(input("Minimum Attack: "))
                 except ValueError:
-                        traceback.print_exc()
+                        logging.exception()
         else:
             while min_attack < 0:
                 print("Attack cannot be negative!")
                 try:
                     min_attack = int(input("Attack: "))
                 except ValueError:
-                        traceback.print_exc()
+                        logging.exception()
         
         if game_version >= 3:
             max_attack = min_attack -1
@@ -43,7 +43,7 @@ class UnitCreator():
                 try:
                     max_attack = int(input("Max Attack: "))
                 except ValueError:
-                    traceback.print_exc()
+                    logging.exception()
         else:
             max_attack = min_attack
 
@@ -55,7 +55,7 @@ class UnitCreator():
                 try:
                     min_initiative = float(input("Initiative: "))
                 except ValueError:
-                    traceback.print_exc()
+                    logging.exception()
             
         elif game_version >= 3:
                 min_initiative = 0
@@ -64,7 +64,7 @@ class UnitCreator():
                     try:
                         min_initiative = float(input("Minimum Initiative: "))
                     except ValueError:
-                        traceback.print_exc()
+                        logging.exception()
 
                 max_initiative = min_initiative -1
                 while max_initiative < min_initiative:
@@ -72,7 +72,7 @@ class UnitCreator():
                     try:
                         max_initiative = float(input("Max Initiative: "))
                     except ValueError:
-                        traceback.print_exc()
+                        logging.exception()
 
         else:
             min_initiative = None
