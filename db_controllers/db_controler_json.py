@@ -16,7 +16,7 @@ class JSONDB():
 
     def save_unit(self, unit):
         
-        unit_dict = {"name": unit.name, "base_health": unit._base_health,"min_attack": unit._min_attack, "max_attack": unit._max_attack, "min_initiative": unit._min_initiative,"max_initiative": unit.get_max_initiative() ,"ai_type" : unit._ai.name, "game_version": unit._game_version, "price_v1": unit.get_price(1), "price_v2": unit.get_price(2), "price_v3": unit.get_price(3), "attack_verb": unit.attack_verb}
+        unit_dict = {"name": unit.name, "base_health": unit._base_health,"min_attack": unit._min_attack, "max_attack": unit._max_attack, "min_initiative": unit._min_initiative,"max_initiative": unit.get_max_initiative() ,"ai_type" : unit._ai.name, "game_version": unit._game_version, "raw_power_v1": unit.get_raw_power(1), "raw_power_v2": unit.get_raw_power(2), "raw_power_v3": unit.get_raw_power(3), "attack_verb": unit.attack_verb}
 
         try:
             pack_name = f'./unit_data/{unit.name.lower()}.json'

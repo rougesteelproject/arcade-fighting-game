@@ -20,9 +20,9 @@ class Team():
         return self._living_members
 
     def buy(self, unit):
-        if self.money >= unit.get_price():
+        if self.money >= unit.get_raw_power():
             self._add_unit(unit)
-            self.money -= unit.get_price()
+            self.money -= unit.get_raw_power()
             
         else:
             print("Insufficient money.")
@@ -30,7 +30,7 @@ class Team():
     def sell(self, unit_to_remove):
         if unit_to_remove in self.members:
             self._remove_unit(unit_to_remove)
-        self.money += unit_to_remove.get_price()
+        self.money += unit_to_remove.get_raw_power()
 
     def combat_init(self):
         self._living_members = self.members

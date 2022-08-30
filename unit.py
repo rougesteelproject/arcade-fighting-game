@@ -3,7 +3,7 @@ from random import randint, uniform
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, price_v1:int = None, price_v2:int = None, price_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, raw_power_v1:int = None, raw_power_v2:int = None, raw_power_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
 
         self.name = name
 
@@ -30,16 +30,16 @@ class Unit:
 
         self._game_version = game_version
 
-        if price_v1 == None and self._game_version == 1:
-            self._set_prices()
-        elif price_v2 == None and self._game_version == 2:
-            self._set_prices()
-        elif price_v3 == None and self._game_version == 3:
-            self._set_prices()
+        if raw_power_v1 == None and self._game_version == 1:
+            self._set_raw_powers()
+        elif raw_power_v2 == None and self._game_version == 2:
+            self._set_raw_powers()
+        elif raw_power_v3 == None and self._game_version == 3:
+            self._set_raw_powers()
         else:
-            self.price_v1 = price_v1
-            self.price_v2 = price_v2
-            self.price_v3 = price_v3
+            self.raw_power_v1 = raw_power_v1
+            self.raw_power_v2 = raw_power_v2
+            self.raw_power_v3 = raw_power_v3
 
         self.id = 0
 
@@ -94,66 +94,66 @@ class Unit:
     def _set_initiative_value(self):
         self._initiative_value = ((math.sqrt(self._max_initiative/self._min_initiative))*self._min_initiative)**1.1
 
-    def _round_one_minimum(base_price):
+    def _round_one_minimum(base_raw_power):
 
-        if round(base_price) <= 0:
-            rounded_price = 1
+        if round(base_raw_power) <= 0:
+            rounded_raw_power = 1
         else:
-            rounded_price = round(base_price) #rounding to the nearest integer
+            rounded_raw_power = round(base_raw_power) #rounding to the nearest integer
 
-        return rounded_price
+        return rounded_raw_power
 
-    def _set_price_v1(self):
-        price_v1  = (2 * (self._base_health + (5 * self._min_attack)) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
-        self.price_v1 = self.round_one_minimum(price_v1)
+    def _set_raw_power_v1(self):
+        raw_power_v1  = (2 * (self._base_health + (5 * self._min_attack)) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
+        self.raw_power_v1 = self.round_one_minimum(raw_power_v1)
 
-    def _set_price_v2(self):
-        price_v2 = (2 * (self._base_health + (5 * self._min_attack * (self._max_initiative ** 1.1))) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
-        self.price_v2 = self._round_one_minimum(price_v2)
+    def _set_raw_power_v2(self):
+        raw_power_v2 = (2 * (self._base_health + (5 * self._min_attack * (self._max_initiative ** 1.1))) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
+        self.raw_power_v2 = self._round_one_minimum(raw_power_v2)
 
 
-    def _set_price_v3(self):
+    def _set_raw_power_v3(self):
         self._set_attack_value()
         self._set_initiative_value()
 
         self._offensive_power = self._attack_value * self._initiative_value *5
 
-        price_v3 = (2*(self._base_health + self._offensive_power) + 3*(math.sqrt(self._base_health * self._offensive_power) *2))/5
-        self.price_v3 = self._round_one_minimum(price_v3)
+        raw_power_v3 = (2*(self._base_health + self._offensive_power) + 3*(math.sqrt(self._base_health * self._offensive_power) *2))/5
+        self.raw_power_v3 = self._round_one_minimum(raw_power_v3)
 
 
-    def _set_prices(self):
+    def _set_raw_powers(self):
         
         self._check_stat_validity()
 
         if not self._is_invalid_v3:
-            self._set_price_v3()
+            self._set_raw_power_v3()
         else:
-            self.price_v3 = None
+            self.raw_power_v3 = None
 
         if not self._is_invalid_v2:
-            self._set_price_v2()
+            self._set_raw_power_v2()
         else:
-            self.price_v2 = None
+            self.raw_power_v2 = None
 
         if not self._is_invalid_v1:
-            self._set_price_v1()
+            self._set_raw_power_v1()
         else:
-            self.price_v1 = None
+            self.raw_power_v1 = None
 
 
-    def get_price(self, game_version):
+    def get_raw_power(self, game_version):
 
         if game_version == 3:
-            price = self.price_v3
+            raw_power = self.raw_power_v3
         elif game_version == 2:
-            price = self.price_v2
+            raw_power = self.raw_power_v2
         elif game_version == 1:
-            price = self.price_v1
+            raw_power = self.raw_power_v1
 
-        if price == None:
-            print("Tried to get price from a unit with invalid stats.")
-        return price
+        if raw_power == None:
+            print("Tried to get raw_power from a unit with invalid stats.")
+        return raw_power
 
     def set_callback_team(self, callback_team):
         self.callback_team = callback_team

@@ -1,7 +1,7 @@
 #TODO a minimalist clickable ui
-#TODO Rename price to RAW POWER before I get too deep in the AI stuff
+
+#TODO trim forward compatibility
 #TODO check for bugs
-    #TODO what happens to v1 units trying to calculate v2 or v3 prices when max_init = None ?
 
 
 

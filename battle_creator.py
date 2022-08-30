@@ -45,7 +45,7 @@ class BattleCreator():
         
         if len(self._search_bar_units_data) != 0:
             for index, unit_data in enumerate(self._search_bar_units_data):
-                unit_prompt += f'{index}: {unit_data["name"]}: {unit_data["price"]} \n'
+                unit_prompt += f'{index}: {unit_data["name"]}: {unit_data["raw_power"]} \n'
 
             unit_menu = Menu("Search Results:", unit_prompt, number_of_options=len(self._search_bar_units_data))
 
@@ -62,7 +62,7 @@ class BattleCreator():
             team_selection = self._teams[team_menu.get_selection()]
 
             try:
-                unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], price_v1=unit_data['price_v1'], price_v2=unit_data['price_v2'], price_v3=unit_data['price_v3'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
+                unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], raw_power_v1=unit_data['raw_power_v1'], raw_power_v2=unit_data['raw_power_v2'], raw_power_v3=unit_data['raw_power_v3'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
                 unit_selection._check_stat_validity()
 
                 if self._game_version == 1 and unit_selection.is_invalid_v1 == False:
@@ -88,7 +88,7 @@ class BattleCreator():
         sell_unit_prompt = """"""
 
         for index, unit in enumerate(team_to_sell_from.members):
-            sell_unit_prompt += f'{index}: {unit.name}: {unit.get_price()} \n'
+            sell_unit_prompt += f'{index}: {unit.name}: {unit.get_raw_power()} \n'
 
         sell_unit_menu = Menu("Which unit?", sell_unit_prompt, len(team_to_sell_from.members) + 1)
 
