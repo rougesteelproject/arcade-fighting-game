@@ -1,10 +1,10 @@
-from team import Team
-
 class BattleCoordinator():
-    def __init__(self, teams) -> None:
+    def __init__(self, teams, use_initiative) -> None:
         self._teams = teams
 
         self._victor = None
+
+        self._use_initiative = use_initiative
 
     def _roll_initiative(self):
         for unit in self._check_living_units():
@@ -27,17 +27,25 @@ class BattleCoordinator():
             if not team.get_living_members():
                 potential_winners.remove(team)
         if len(potential_winners) == 1:
-            self._victor = potential_winners[0]
-                
-
-
+            self._victor = potential_winners[0]              
 
     def _do_round(self):
-        self._roll_initiative()
+        
+        if self._use_initiative:
+            self._roll_initiative()
 
-        active_units = sorted(self._check_living_units(), key=lambda active_unit: active_unit.get_initiative_bar(), reverse=True)
+            active_units = sorted(self._check_living_units(), key=lambda active_unit: active_unit.get_initiative_bar(), reverse=True)
+        else:
+            active_units = self._check_living_units()
+
         for active_unit in active_units:
-            if active_unit.is_alive and self._victor == None and active_unit.get_initiative_bar() >= self._initiative_threshold:
+            if self._use_initiative:
+                if active_unit.get_initiative_bar() >= self._initiative_threshold:
+                    unit_can_attack = active_unit.get_is_alive()
+            else:
+                unit_can_attack = True
+
+            if unit_can_attack and self._victor == None:
                 target_list = self._get_targets(active_unit)
                 damage, target = active_unit.do_game_tick(target_list, self._initiative_threshold)
                 
@@ -45,8 +53,16 @@ class BattleCoordinator():
                 
                 target.take_damage(damage)
 
-                self._check_victory()
-      
+                if self._use_initiative:
+                    target.check_is_dead()
+
+                    self._check_victory()
+
+        if self._use_initiative == False:
+            for active_unit in active_units:
+                active_unit.check_is_dead()
+
+            self._check_victory()
 
     def _initialize_teams(self):
         for team in self._teams:
@@ -62,7 +78,8 @@ class BattleCoordinator():
         
         self._initialize_teams()        
 
-        self._set_initiative_threshold()
+        if self._use_initiative:    
+            self._set_initiative_threshold()
 
         self._check_victory()
 

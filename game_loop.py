@@ -1,9 +1,12 @@
+import constants
 from battle_creator import BattleCreator
 from unit_creator import UnitCreator
 from battle_coordinator import BattleCoordinator
 from db_controllers.db_controler_json import JSONDB
 from menu import Menu
 import traceback
+
+
 
 class GameLoop():
     def __init__(self) -> None:
@@ -30,13 +33,21 @@ class GameLoop():
             selection = main_menu.get_selection()
 
             if selection == 0:
-                self._unit_creator = UnitCreator(self._database_controler)
-                self._unit_creator.save_unit_to_db(self._unit_creator.get_input_unit_stats())
+                try:
+                    game_version = float(input("What version of the game is this unit for?"))
+
+                    self._unit_creator = UnitCreator(self._database_controler)
+                    self._unit_creator.save_unit_to_db(self._unit_creator.get_input_unit_stats(game_version))
+                except:
+                    traceback.print_exc()
+
+                
 
             elif selection == 1:
                 try:
                     money_limit = int(input("What is the money limit for this battle? "))
-                    self._battle_creator = BattleCreator(callback = self, money_limit=money_limit)
+                    game_version = constants.DEFAULT_GAME_VERSION
+                    self._battle_creator = BattleCreator(callback = self, money_limit=money_limit, game_version= game_version)
                     self._create_battle()
                 except:
                     traceback.print_exc()
@@ -47,8 +58,8 @@ class GameLoop():
     def _create_battle(self):
         self._battle_creator.loop()
 
-    def run_battle(self, teams):
-        self._battle_coordinator = BattleCoordinator(teams)
+    def run_battle(self, teams, use_initiative):
+        self._battle_coordinator = BattleCoordinator(teams, use_initiative)
         self._battle_coordinator.run_battle()
 
 gameloop = GameLoop()

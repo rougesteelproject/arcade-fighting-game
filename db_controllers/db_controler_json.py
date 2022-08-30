@@ -16,7 +16,7 @@ class JSONDB():
 
     def save_unit(self, unit):
         
-        unit_dict = {"name": unit.name, "base_health": unit._base_health,"min_attack": unit._min_attack, "max_attack": unit._max_attack, "min_initiative": unit._min_initiative,"max_initiative": unit.get_max_initiative() ,"ai_type" : unit._ai.name, "game_version": unit._game_version, "price": unit.get_price(), "attack_verb": unit.attack_verb}
+        unit_dict = {"name": unit.name, "base_health": unit._base_health,"min_attack": unit._min_attack, "max_attack": unit._max_attack, "min_initiative": unit._min_initiative,"max_initiative": unit.get_max_initiative() ,"ai_type" : unit._ai.name, "game_version": unit._game_version, "price_v1": unit.get_price(1), "price_v2": unit.get_price(2), "price_v3": unit.get_price(3), "attack_verb": unit.attack_verb}
 
         try:
             pack_name = f'./unit_data/{unit.name.lower()}.json'
@@ -29,14 +29,22 @@ class JSONDB():
         except:
             traceback.print_exc()
 
-    def get_unit_data_by_name(self, unit_name):
+    def get_unit_data_by_name(self, unit_name, game_version, enable_other_version_units):
         
         #load form a pack with that name
 
         try:
             with open(f'{unit_name.lower()}.json') as unit_json:
                 unit_data = json.load(unit_json)
-                return unit_data
+
+                if unit_data['game_version'] == game_version:
+                    return unit_data
+                elif game_version >= 2 and unit_data['game_version'] >= 2 and enable_other_version_units:
+                    return unit_data
+                else:
+                    return None
+                    #this may not be the right aproach. Maybe return None breaks things?
+                    
         except:
             traceback.print_exc()
 

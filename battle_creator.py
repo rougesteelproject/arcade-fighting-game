@@ -5,11 +5,14 @@ from unit import Unit
 import traceback
 
 class BattleCreator():
-    def __init__(self, callback, money_limit) -> None:
+    def __init__(self, callback, money_limit, game_version) -> None:
         
         self._callback = callback
 
         self._database_controller = self._callback._database_controler
+
+        self._game_version = game_version
+        self._enable_other_version_units = False
 
         self._money_limit = money_limit
 
@@ -20,9 +23,23 @@ class BattleCreator():
         while len(self._teams) < 2:
             self._add_team()
 
+        self._set_use_initiative()
+        self._set_use_variability()
+
+    def _set_use_initiative(self):
+        if self._game_version >= 2:
+            self._use_initiative = True
+        else:
+            self._use_initiative = False
+
+    def _set_use_variability(self):
+        if self._game_version >= 3:
+            self._use_variability = True
+        else:
+            self._use_variability = False
 
     def _search_and_buy_units_by_name(self, name):
-        self._search_bar_units_data = self._database_controller.get_unit_list_by_name(unit_name=name)
+        self._search_bar_units_data = self._database_controller.get_unit_list_by_name(unit_name=name, game_version=self._game_version, enable_other_version_units=self._enable_other_version_units)
 
         unit_prompt = ""
         
@@ -46,7 +63,14 @@ class BattleCreator():
 
             try:
                 unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], price=unit_data['price'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
-                team_selection.buy(unit_selection)
+                unit_selection._check_stat_validity()
+
+                if self._game_version == 1 and unit_selection.is_invalid_v1 == False:
+                    team_selection.buy(unit_selection)
+                elif self._game_version == 2 and unit_selection.is_invalid_v2 == False:
+                    team_selection.buy(unit_selection)
+                elif self._game_version == 3 and unit_selection.is_invalid_v3 == False:
+                    team_selection.buy(unit_selection)
             except:
                 traceback.print_exc()
 
@@ -102,7 +126,7 @@ class BattleCreator():
 
 
     def _run_battle(self):
-        self._callback.run_battle(self._teams)
+        self._callback.run_battle(self._teams, self._use_initiative)
 
     def loop(self):
 
@@ -117,9 +141,10 @@ class BattleCreator():
             3: See Teams:
             4: Play the Battle!
             5: Exit to Main Menu
+            6: Enable Units From Other Versions of the Game
             """
 
-            menu = Menu("Battle Creator", prompt, number_of_options=6)
+            menu = Menu("Battle Creator", prompt, number_of_options=7)
 
             selection = menu.get_selection()
 
@@ -146,3 +171,18 @@ class BattleCreator():
 
             elif selection == 5:
                 loop = False
+
+            elif selection == 6:
+                if self._game_version >= 2:
+                    print("Do you want to enable older/younger units? These may not work properly.")
+                    enable_other_input = ""
+                    while enable_other_input != "y" and enable_other_input != "n":
+                        try:
+                            enable_other_input = input("Please type \'y\' or \'n\': ").lower()
+                        except:
+                            traceback.print_exc()
+
+                    if enable_other_input == "y":
+                        self._enable_other_version_units = True
+                    elif enable_other_input == "n":
+                        self._enable_other_version_units = False

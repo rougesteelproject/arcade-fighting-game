@@ -1,0 +1,48 @@
+#TODO replace traceback with whatever I used for RAC
+#TODO a minimalist clickable ui
+#TODO check for bugs
+
+# v2 added initiative, v3 added variability
+
+FORWARD COMPATIBILITY
+# so that v2 units are forward compatible with v3 units, they'll default to min_init = 1 and max_init = init
+    -- #This will mean 'doormat' 0 init creatures will be invalid for v3 or higher because their max_init will be lower than their min_init
+        -- #validity is checked on battle creation, so there won't be any errors
+# Attack can have min equal to max, so there's nothing to worry about regarding making v2 attack forward compatible
+# v1 units can't be forward compatible because they don't have initiative
+
+# Have the db controler check game versions match before even giving it to the battle battle_creator
+# Then the battle_creator has units check themselves before giving them to the team
+
+#TODO AI
+# -- The big thing that will be difficult with modularity [in the pricing algorithm] is AI
+# AI isn't going to have hard/discrete calculations due to interacting with everything else too complexly
+# we will need a different system for deciding how AI pricing should be changed as more modules are activated
+    -- #TODO AI pricing algorithm that's different depending on initiative/no init [v2] and variance/no variance [v3]
+# But that in turn requires us to have figured out the basic structure and pricing systems for AI
+
+
+#TODO ALGORITHM MODULARITY
+# step after that is building our foundation for modularity [in the pricing algorithm]
+# the eventual goal is being totally modular.
+# the whole system, including the input process, can switch itself around based on what's turned on and off
+
+    -- #TODO a way to adjust unit._set_initiative_value() [v3 pricing] so we can make 'doormat'/'punching bag' units with zero initiative
+        # assuming 0/0 is one, the price of a 0/0 init would be (2/5) * (base_health), before rounding [v3]
+
+
+#unit prices are rounded to the nearest whole number (min 1) from floats. Watch for floating-point errors
+
+# version only matters on unit creation and battle_creator
+
+# battle_coordinator only needs to know yes or no initiative, yes or no variability/rolling
+    # The default without initiative is everything acting simultaneously
+
+
+REJECT PILE:
+
+#right now, we're reduntanly checking validity on creation and on getting the price
+#IDEA: a unit validity checker that either could call
+    -- REJECT REASON: Making a unit has to be done one step at a time, instead of makkng you start from scratch for one typo
+# Using the class's every time would mean making a new instance of the role class, even if they are going to be thrown away
+# Doing it only on unit creation lets 'third-party' invalid units be imported
