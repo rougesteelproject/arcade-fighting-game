@@ -1,12 +1,16 @@
 #TODO replace traceback with whatever I used for RAC
 #TODO a minimalist clickable ui
+#TODO Rename price to RAW POWER before I get too deep in the AI stuff
 #TODO check for bugs
     #TODO what happens to v1 units trying to calculate v2 or v3 prices when max_init = None ?
 
+
+
+GAME VERSIONS
 # v2 added initiative, v3 added variability
 
-FORWARD COMPATIBILITY
-# so that v2 units are forward compatible with v3 units, they'll default to min_init = 1 and max_init = init
+GAME VERSIONS: FORWARD COMPATIBILITY
+# v2 units default to min_init = 1 and max_init = init so that v2 units are forward compatible with v3 units
     -- #This will mean 'doormat' 0 init creatures will be invalid for v3 or higher because their max_init will be lower than their min_init
         -- #validity is checked on battle creation, so there won't be any errors
 # Attack can have min equal to max, (and are created that way in v2)
@@ -17,11 +21,12 @@ FORWARD COMPATIBILITY
 # Then the battle_creator has units check themselves before giving them to the team
 
 #TODO AI
-# -- The big thing that will be difficult with modularity [in the pricing algorithm] is AI
-# AI isn't going to have hard/discrete calculations due to interacting with everything else too complexly
-# we will need a different system for deciding how AI pricing should be changed as more modules are activated
-    -- #TODO AI pricing algorithm that's different depending on initiative/no init [v2] and variance/no variance [v3]
-# But that in turn requires us to have figured out the basic structure and pricing systems for AI
+
+# -- AI is difficult with modularity [in the pricing algorithm] 
+
+#TODO figure out the basic structure and pricing systems for AI
+#TODO a different system for deciding how AI pricing should be changed as more modules are activated
+    -- #TODO start with AI pricing algorithm that's different depending on initiative/no init [v2] and variance/no variance [v3]
 
 
 #TODO ALGORITHM MODULARITY

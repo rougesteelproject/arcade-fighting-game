@@ -3,7 +3,7 @@ from battle_creator import BattleCreator
 from unit_creator import UnitCreator
 from battle_coordinator import BattleCoordinator
 from db_controllers.db_controler_json import JSONDB
-from menu import Menu
+from menus.menu_console import MenuConsole as Menu
 import traceback
 
 

@@ -1,5 +1,5 @@
 from constants import LIMIT_NUMBER_OF_PLAYERS
-from menu import Menu
+from menus.menu_console import MenuConsole as Menu
 from team import Team
 from unit import Unit
 import traceback

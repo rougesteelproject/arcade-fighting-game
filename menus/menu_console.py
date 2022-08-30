@@ -1,6 +1,6 @@
 import traceback
 
-class Menu():
+class MenuConsole():
     def __init__(self, menu_name, prompt, number_of_options) -> None:
         self._name = menu_name
         self._prompt = prompt

@@ -1,3 +1,6 @@
+from ais.basic_ai import BasicAI
+
+
 class BattleCoordinator():
     def __init__(self, teams, use_initiative, use_variance) -> None:
         self._teams = teams
@@ -32,7 +35,14 @@ class BattleCoordinator():
             self._victor = "Nobody!"
         elif len(potential_winners) == 1:
             self._victor = potential_winners[0]
-            print(f'Team \"{self._victor.name}\" has won!')             
+            print(f'Team \"{self._victor.name}\" has won!')
+
+    def _do_game_tick(self, unit, game_data):
+        if unit.ai_type == "basic":
+            if self._basic_ai == None:
+                self._basic_ai == BasicAI()
+            self._basic_ai.do_game_tick(game_data['targets'])
+            #TODO change to getting all enemies of a given unit
 
     def _do_round(self):
         
