@@ -24,7 +24,7 @@ class BattleCreator():
             self._add_team()
 
         self._set_use_initiative()
-        self._set_use_variability()
+        self._set_use_variance()
 
     def _set_use_initiative(self):
         if self._game_version >= 2:
@@ -32,11 +32,11 @@ class BattleCreator():
         else:
             self._use_initiative = False
 
-    def _set_use_variability(self):
+    def _set_use_variance(self):
         if self._game_version >= 3:
-            self._use_variability = True
+            self._use_variance = True
         else:
-            self._use_variability = False
+            self._use_variance = False
 
     def _search_and_buy_units_by_name(self, name):
         self._search_bar_units_data = self._database_controller.get_unit_list_by_name(unit_name=name, game_version=self._game_version, enable_other_version_units=self._enable_other_version_units)
@@ -126,7 +126,7 @@ class BattleCreator():
 
 
     def _run_battle(self):
-        self._callback.run_battle(self._teams, self._use_initiative)
+        self._callback.run_battle(self._teams, self._use_initiative, self._use_variance)
 
     def loop(self):
 
@@ -142,9 +142,11 @@ class BattleCreator():
             4: Play the Battle!
             5: Exit to Main Menu
             6: Enable Units From Other Versions of the Game
+            7: Toggle Variance
+            8: Toggle Initiative
             """
 
-            menu = Menu("Battle Creator", prompt, number_of_options=7)
+            menu = Menu("Battle Creator", prompt, number_of_options=9)
 
             selection = menu.get_selection()
 
@@ -186,3 +188,22 @@ class BattleCreator():
                         self._enable_other_version_units = True
                     elif enable_other_input == "n":
                         self._enable_other_version_units = False
+
+            elif selection == 7:
+                if self._game_version >= 2:
+                    if self._use_initiative:
+                        print("Initiative turned off. Units take their turns at the same time.")
+                        self._use_initiative = False
+                    else:
+                        print("Initiative turned on. Units will roll initiative.")
+                        self._use_initiative = True
+
+            elif selection == 8:
+                if self._game_version >= 3:
+                    if self._use_variance:
+                        print("Variability turned off. Units always roll max for attacks and initiative.")
+                        self._use_variance = False
+                    else:
+                        print("Variability turned on. Units roll for initiative and damage.")
+                        self._use_variance = True
+                

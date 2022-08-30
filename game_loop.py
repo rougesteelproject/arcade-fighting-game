@@ -58,8 +58,8 @@ class GameLoop():
     def _create_battle(self):
         self._battle_creator.loop()
 
-    def run_battle(self, teams, use_initiative):
-        self._battle_coordinator = BattleCoordinator(teams, use_initiative)
+    def run_battle(self, teams, use_initiative, use_variance):
+        self._battle_coordinator = BattleCoordinator(teams, use_initiative, use_variance=use_variance)
         self._battle_coordinator.run_battle()
 
 gameloop = GameLoop()
