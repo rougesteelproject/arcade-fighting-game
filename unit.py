@@ -159,8 +159,11 @@ class Unit:
     def get_initiative_bar(self):
         return self._initiative_bar
 
-    def attack_roll(self):
-        return randint(self._min_attack, self._max_attack)
+    def attack_roll(self, use_variance):
+        if use_variance:
+            return randint(self._min_attack, self._max_attack)
+        else:
+            return self._max_attack
 
     def check_is_dead(self):
         if self._current_health <= 0:
@@ -172,20 +175,24 @@ class Unit:
     def take_damage(self, damage):
         self._current_health -= damage
 
-    def roll_initiative(self):
-        n = constants.INITIATIVE_NUMBER_OF_POSIBILITIES
-        x = uniform(0,n)
-        roll = self._min_initiative * (self._max_initiative/self._min_initiative)**(x/n)
+    def roll_initiative(self, use_variance):
+        if use_variance:
+            n = constants.INITIATIVE_NUMBER_OF_POSIBILITIES
+            x = uniform(0,n)
+            roll = self._min_initiative * (self._max_initiative/self._min_initiative)**(x/n)
+        else:
+            roll = self._max_initiative
         self._initiative_bar += roll
 
     def set_id(self, id):
         self.id = id
 
-    def do_game_tick(self, targets, initiative_threshold):
-        damage, target = self._ai.do_game_tick(targets)
-
+    def expend_initiative(self, initiative_threshold):
         self._initiative_bar -= initiative_threshold
 
+    def do_game_tick(self, targets, use_variance):
+        damage, target = self._ai.do_game_tick(targets, use_variance)
+            
         return damage, target
 
     def get_is_alive(self):

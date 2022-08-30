@@ -14,8 +14,8 @@ class AI():
         target = choice(self._target_list)
         return target
 
-    def _attack(self):
-        damage = self._callback_unit.attack_roll()
+    def _attack(self, use_variance):
+        damage = self._callback_unit.attack_roll(use_variance)
         target = self._select_target()
 
         return damage, target
@@ -31,8 +31,8 @@ class AI():
         return damage, target
 
 
-    def do_game_tick(self, targets):
+    def do_game_tick(self, targets, use_variance):
         self._update_target_list(targets)
-        damage, target = self._decide_to_attack()
+        damage, target = self._decide_to_attack(use_variance)
 
         return damage, target

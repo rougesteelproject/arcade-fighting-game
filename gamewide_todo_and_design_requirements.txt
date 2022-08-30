@@ -8,7 +8,8 @@ FORWARD COMPATIBILITY
 # so that v2 units are forward compatible with v3 units, they'll default to min_init = 1 and max_init = init
     -- #This will mean 'doormat' 0 init creatures will be invalid for v3 or higher because their max_init will be lower than their min_init
         -- #validity is checked on battle creation, so there won't be any errors
-# Attack can have min equal to max, so there's nothing to worry about regarding making v2 attack forward compatible
+# Attack can have min equal to max, (and are created that way in v2)
+#    there's nothing to worry about regarding making v2 attack forward compatible
 # v1 units can't be forward compatible because they don't have initiative
 
 # Have the db controler check game versions match before even giving it to the battle battle_creator

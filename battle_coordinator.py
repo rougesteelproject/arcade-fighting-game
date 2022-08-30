@@ -1,14 +1,15 @@
 class BattleCoordinator():
-    def __init__(self, teams, use_initiative) -> None:
+    def __init__(self, teams, use_initiative, use_variance) -> None:
         self._teams = teams
 
         self._victor = None
 
         self._use_initiative = use_initiative
+        self._use_variance = use_variance
 
     def _roll_initiative(self):
         for unit in self._check_living_units():
-            unit.roll_initiative()
+            unit.roll_initiative(self._use_variance)
 
     def _check_living_units(self):
         living_units = []
@@ -37,6 +38,7 @@ class BattleCoordinator():
             active_units = sorted(self._check_living_units(), key=lambda active_unit: active_unit.get_initiative_bar(), reverse=True)
         else:
             active_units = self._check_living_units()
+            self._initiative_threshold = 0
 
         for active_unit in active_units:
             if self._use_initiative:
@@ -47,8 +49,11 @@ class BattleCoordinator():
 
             if unit_can_attack and self._victor == None:
                 target_list = self._get_targets(active_unit)
-                damage, target = active_unit.do_game_tick(target_list, self._initiative_threshold)
+                damage, target = active_unit.do_game_tick(target_list, use_variance = self._use_variance)
                 
+                if self._use_initiative:
+                    active_unit.expend_initiative(self._initiative_threshold)
+
                 print(f'{active_unit.name} on team {active_unit.callback_team.name} {active_unit.attack_verb} {target.name} on team {target.callback_team.name} for {damage} damage!')
                 
                 target.take_damage(damage)
