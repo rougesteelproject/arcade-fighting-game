@@ -27,8 +27,12 @@ class BattleCoordinator():
         for team in self._teams:
             if not team.get_living_members():
                 potential_winners.remove(team)
-        if len(potential_winners) == 1:
-            self._victor = potential_winners[0]              
+        if len(potential_winners) == 0:
+            print("It\'s a draw!")
+            self._victor = "Nobody!"
+        elif len(potential_winners) == 1:
+            self._victor = potential_winners[0]
+            print(f'Team \"{self._victor.name}\" has won!')             
 
     def _do_round(self):
         
@@ -90,5 +94,3 @@ class BattleCoordinator():
 
         while self._victor == None:
             self._do_round()
-
-        print(f'Team \"{self._victor.name}\" has won!')
