@@ -48,8 +48,7 @@ class GameLoop():
             elif selection == 1:
                 try:
                     money_limit = int(input("What is the money limit for this battle? "))
-                    game_version = constants.DEFAULT_GAME_VERSION
-                    self._battle_creator = BattleCreator(callback = self, money_limit=money_limit, game_version= game_version)
+                    self._battle_creator = BattleCreator(callback = self, money_limit=money_limit)
                     self._create_battle()
                 except:
                     logging.exception()

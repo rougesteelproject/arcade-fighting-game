@@ -1,24 +1,22 @@
 #TODO a minimalist clickable ui
 
-#TODO trim forward compatibility
 #TODO check for bugs
-
 
 
 GAME VERSIONS
 # v2 added initiative, v3 added variability
 
-GAME VERSIONS: FORWARD COMPATIBILITY
-#TODO the original plan was only Backwards compatibility, so we can trim some parts and use v3 units in v2 and v2 in v1
-# v2 units default to min_init = 1 and max_init = init so that v2 units are forward compatible with v3 units
-    -- #This will mean 'doormat' 0 init creatures will be invalid for v3 or higher because their max_init will be lower than their min_init
-        -- #validity is checked on battle creation, so there won't be any errors
-# Attack can have min equal to max, (and are created that way in v2)
-#    there's nothing to worry about regarding making v2 attack forward compatible
-# v1 units can't be forward compatible because they don't have initiative
+GAME VERSIONS: Backwards COMPATIBILITY
+#only Backwards compatibility, so we can use v3 units in v2 and v2 in v1
+    #Don't set max_initiative or max_attack if not v3, don't set min_initiative if not at least v2
+
+# version only matters on unit creation and battle_creator
+
+# ask for the game version within battle_creator, then warn the user which units will be cut if going up a version
+#   When versions change, the game switches pricing. invalid units are refunded. remaining units may be over budget.
 
 # Have the db controler check game versions match before even giving it to the battle battle_creator
-# Then the battle_creator has units check themselves before giving them to the team
+
 
 #TODO AI
 
@@ -30,7 +28,7 @@ GAME VERSIONS: FORWARD COMPATIBILITY
 
 
 #TODO ALGORITHM MODULARITY
-# step after that is building our foundation for modularity [in the pricing algorithm]
+# build our foundation for modularity [in the pricing algorithm]
 # the eventual goal is being totally modular.
 # the whole system, including the input process, can switch itself around based on what's turned on and off
 
@@ -40,16 +38,6 @@ GAME VERSIONS: FORWARD COMPATIBILITY
 
 #unit prices are rounded to the nearest whole number (min 1) from floats. Watch for floating-point errors
 
-# version only matters on unit creation and battle_creator
 
 # battle_coordinator only needs to know yes or no initiative, yes or no variability/rolling
     # The default without initiative is everything acting simultaneously
-
-
-REJECT PILE:
-
-#right now, we're reduntanly checking validity on creation and on getting the price
-#IDEA: a unit validity checker that either could call
-    -- REJECT REASON: Making a unit has to be done one step at a time, instead of makkng you start from scratch for one typo
-# Using the class's every time would mean making a new instance of the role class, even if they are going to be thrown away
-# Doing it only on unit creation lets 'third-party' invalid units be imported

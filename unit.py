@@ -1,40 +1,39 @@
+import logging
 import math
 from random import randint, uniform
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_type: str, raw_power_v1:int = None, raw_power_v2:int = None, raw_power_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_types: list, raw_power_v1:int = None, raw_power_v2:int = None, raw_power_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
 
         self.name = name
+
+        self._game_version = game_version
 
         self._base_health = base_health
         
         self._min_attack = min_attack
         
-        if game_version >= 3: # variable attack was added in v3
+        if self._game_version >= 3: # variable attack was added in v3
             self._max_attack = max_attack
-        else:
-            self._max_attack = min_attack
 
-        if game_version >= 2: #initiative added in v2
+        if self._game_version >= 2: #initiative added in v2
             self._min_initiative = min_initiative
         
-        if game_version >= 3: #variable initiative added in v3
+        if self._game_version >= 3: #variable initiative added in v3
             self._max_initiative = max_initiative
-        else:
-            self._max_initiative = min_initiative
 
         self.attack_verb = attack_verb
 
-        self._ai = self._set_ai(ai_type)
+        self._ai_types = ai_types
 
-        self._game_version = game_version
-
-        if raw_power_v1 == None and self._game_version == 1:
+        
+        
+        if raw_power_v3 == None and self._game_version == 3:
             self._set_raw_powers()
         elif raw_power_v2 == None and self._game_version == 2:
             self._set_raw_powers()
-        elif raw_power_v3 == None and self._game_version == 3:
+        elif raw_power_v1 == None and self._game_version == 1:
             self._set_raw_powers()
         else:
             self.raw_power_v1 = raw_power_v1
@@ -61,21 +60,21 @@ class Unit:
             self.is_invalid_v2 = True
             self.is_invalid_v3 = True
 
-        if self._game_version >= 2  and self._max_attack < self._min_attack:
+        if self._game_version >= 3  and self._max_attack < self._min_attack:
             print("Max attack must be greater than or equal to min attack!")
-            self.is_invalid_v2 = True
+
             self.is_invalid_v3 = True
 
-        if self._game_version >= 2 and (self._max_initiative < self._min_initiative):
+        if self._game_version >= 3 and (self._max_initiative < self._min_initiative):
             print("Max initiative must be greater than or equal to min!")
-            self.is_invalid_v2 = True
+
             self.is_invalid_v3 = True
         
         if self._game_version >= 2 and self._min_initiative < 0:
             print("min initiative cannot be negative. It must be at least zero!")
             self.is_invalid_v2 = True
-            self.is_invalid_v3 = True
-        elif self._game_version >= 3 and self._min_initiative == 0:
+
+        if self._game_version >= 3 and self._min_initiative == 0:
             print("min initiative must be greater than zero!")
             self.is_invalid_v3 = True
 
@@ -126,20 +125,23 @@ class Unit:
         
         self._check_stat_validity()
 
-        if not self._is_invalid_v3:
-            self._set_raw_power_v3()
-        else:
-            self.raw_power_v3 = None
+        if self._game_version >= 3:
+            if self._is_invalid_v3 == False:
+                self._set_raw_power_v3()
+            else:
+                self.raw_power_v3 = None
 
-        if not self._is_invalid_v2:
-            self._set_raw_power_v2()
-        else:
-            self.raw_power_v2 = None
+        if self._game_version >= 2:
+            if self._is_invalid_v2 == False:
+                self._set_raw_power_v2()
+            else:
+                self.raw_power_v2 = None
 
-        if not self._is_invalid_v1:
-            self._set_raw_power_v1()
-        else:
-            self.raw_power_v1 = None
+        if self._game_version >= 1:
+            if self._is_invalid_v1 == False:
+                self._set_raw_power_v1()
+            else:
+                self.raw_power_v1 = None
 
 
     def get_raw_power(self, game_version):
@@ -152,7 +154,7 @@ class Unit:
             raw_power = self.raw_power_v1
 
         if raw_power == None:
-            print("Tried to get raw_power from a unit with invalid stats.")
+            logging.error("Tried to get raw_power from a unit with invalid stats.")
         return raw_power
 
     def set_callback_team(self, callback_team):

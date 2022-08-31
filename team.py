@@ -19,18 +19,18 @@ class Team():
     def get_living_members(self):
         return self._living_members
 
-    def buy(self, unit):
-        if self.money >= unit.get_raw_power():
+    def buy(self, unit, game_version):
+        if self.money >= unit.get_raw_power(game_version):
             self._add_unit(unit)
-            self.money -= unit.get_raw_power()
+            self.money -= unit.get_raw_power(game_version)
             
         else:
             print("Insufficient money.")
 
-    def sell(self, unit_to_remove):
+    def sell(self, unit_to_remove, game_version):
         if unit_to_remove in self.members:
             self._remove_unit(unit_to_remove)
-        self.money += unit_to_remove.get_raw_power()
+        self.money += unit_to_remove.get_raw_power(game_version)
 
     def combat_init(self):
         self._living_members = self.members
@@ -54,4 +54,36 @@ class Team():
 
         return troop_disposition
 
+    def list_outdated_members(self, new_game_version):
 
+        troop_disposition = """"""
+
+        unit_type = ""
+        unit_count = 0
+
+        for unit in self.members:
+            if unit._game_version < new_game_version:
+                if unit.name != unit_type:
+                    unit_type = unit.name
+
+                    unit_count = sum(unit.name == unit_type for unit in self.members)
+
+                    troop_disposition += f'{unit.name} x {unit_count}'
+                
+
+        return troop_disposition
+
+    def sell_outdated_units(self, previous_game_version, new_game_version):
+
+        outdated_units = [unit for unit in self.members if unit._game_version < new_game_version]
+
+        for outdated_unit in outdated_units:
+            self.sell(outdated_unit, previous_game_version)
+
+    def change_game_version_recalculate_units(self, previous_game_version, new_game_version):
+        
+        units_to_recalculate = [unit for unit in self.members]
+
+        for unit_to_recalculate in units_to_recalculate:
+            self.money += unit_to_recalculate.get_raw_power(previous_game_version)
+            self.money -= unit_to_recalculate.get_raw_power(new_game_version)

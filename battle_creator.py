@@ -5,14 +5,15 @@ from unit import Unit
 import logging
 
 class BattleCreator():
-    def __init__(self, callback, money_limit, game_version) -> None:
+    def __init__(self, callback, money_limit) -> None:
         
         self._callback = callback
 
         self._database_controller = self._callback._database_controler
 
-        self._game_version = game_version
-        self._enable_other_version_units = False
+        self._use_initiative = False
+        self._use_variance = False
+        self._set_game_version()
 
         self._money_limit = money_limit
 
@@ -23,29 +24,109 @@ class BattleCreator():
         while len(self._teams) < 2:
             self._add_team()
 
-        self._set_use_initiative()
-        self._set_use_variance()
+    def _set_game_version(self):
+        
+        game_version_prompt = """
+        1
+        2
+        3"""
 
-    def _set_use_initiative(self):
-        if self._game_version >= 2:
-            self._use_initiative = True
+        game_version_menu = Menu("Select game version: ", game_version_prompt, number_of_options=3)
+        game_version_selection = game_version_menu.get_selection()
+        
+        user_confirmed_change = False
+        print("Changing game version will recalculate the value of units. You may have to sell units in order to start the battle.")
+        if game_version_selection > self._game_version:
+            user_confirmed_change = self._warn_player_outdated_units()
         else:
+            print("Are you sure you want to switch game version?")
+            user_choice = ""
+            while user_choice != "y" and user_choice != "n":
+                user_choice = input("Please type \'y\' or \'n\': ")
+            if user_choice == 'y':
+                user_confirmed_change = True
+
+        if user_confirmed_change:
+            for team in self._teams:
+                team.change_game_version_recalculate_units(self._game_version, game_version_selection)
+            self._game_version = game_version_selection
+
+            print(f"Game version set to {self._game_version}.")
+
+            self._toggle_use_initiative()
+            self._toggle_use_variance()
+
+    def _reset_variance_and_initiative(self):
+        if self._game_version == 1:
+            print("Initiative turned off. Units take their turns at the same time.")
             self._use_initiative = False
-
-    def _set_use_variance(self):
-        if self._game_version >= 3:
-            self._use_variance = True
-        else:
+            print("Variability turned off. Units always roll max for attacks and initiative.")
             self._use_variance = False
 
+        elif self._game_version >= 2:
+            print("Initiative turned on. Units will roll initiative.")
+            self._use_initiative = True
+            if self._game_version >= 3:
+                print("Variability turned on. Units roll for initiative and damage.")
+                self._use_variance = True
+
+    def _toggle_use_initiative(self):
+        if self._game_version >= 2:
+            if self._use_initiative:
+                print("Initiative turned off. Units take their turns at the same time.")
+                self._use_initiative = False
+            else:
+                print("Initiative turned on. Units will roll initiative.")
+                self._use_initiative = True
+
+    def _toggle_use_variance(self):
+        if self._game_version >= 3:
+            if self._use_variance:
+                print("Variability turned off. Units always roll max for attacks and initiative.")
+                self._use_variance = False
+            else:
+                print("Variability turned on. Units roll for initiative and damage.")
+                self._use_variance = True
+
+    def _warn_player_outdated_units(self, game_version_selection):
+
+        print("Moving from a lower game version to a higher one will sell units from earlier versions.")
+        
+        print("The following units will be refunded:")
+
+        for team in self._teams:
+            outdated_list = team.list_outdated_members(game_version_selection)
+
+            if outdated_list != "":
+                print('---')
+                print(f'{team.name}:')
+                print(outdated_list)
+
+        print("Are you sure you want to switch game version?")
+        user_choice = ""
+        while user_choice != "y" and user_choice != "n":
+            user_choice = input("Please type \'y\' or \'n\': ")
+        if user_choice == 'y':
+            user_confirmed_change = True
+
+            for team in self._teams:
+                team.sell_outdated_units(self._game_version, game_version_selection)
+
+        return user_confirmed_change
+
     def _search_and_buy_units_by_name(self, name):
-        self._search_bar_units_data = self._database_controller.get_unit_list_by_name(unit_name=name, game_version=self._game_version, enable_other_version_units=self._enable_other_version_units)
+        self._search_bar_units_data = self._database_controller.get_unit_list_by_name(unit_name=name, game_version=self._game_version)
 
         unit_prompt = ""
         
         if len(self._search_bar_units_data) != 0:
             for index, unit_data in enumerate(self._search_bar_units_data):
-                unit_prompt += f'{index}: {unit_data["name"]}: {unit_data["raw_power"]} \n'
+
+                unit_power = unit_data[f'raw_power_v{self._game_version}']
+                #diferent power for diferent game versions
+
+                unit_prompt += f'{index}: {unit_data["name"]}: {unit_power} \n'
+
 
             unit_menu = Menu("Search Results:", unit_prompt, number_of_options=len(self._search_bar_units_data))
 
@@ -65,12 +146,8 @@ class BattleCreator():
                 unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_type=unit_data['ai_type'], raw_power_v1=unit_data['raw_power_v1'], raw_power_v2=unit_data['raw_power_v2'], raw_power_v3=unit_data['raw_power_v3'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
                 unit_selection._check_stat_validity()
 
-                if self._game_version == 1 and unit_selection.is_invalid_v1 == False:
-                    team_selection.buy(unit_selection)
-                elif self._game_version == 2 and unit_selection.is_invalid_v2 == False:
-                    team_selection.buy(unit_selection)
-                elif self._game_version == 3 and unit_selection.is_invalid_v3 == False:
-                    team_selection.buy(unit_selection)
+
+                team_selection.buy(unit_selection, self._game_version)
             except:
                 logging.exception()
 
@@ -90,9 +167,9 @@ class BattleCreator():
         for index, unit in enumerate(team_to_sell_from.members):
             sell_unit_prompt += f'{index}: {unit.name}: {unit.get_raw_power()} \n'
 
-        sell_unit_menu = Menu("Which unit?", sell_unit_prompt, len(team_to_sell_from.members) + 1)
+        sell_unit_menu = Menu("Which unit?", sell_unit_prompt, len(team_to_sell_from.members))
 
-        team_to_sell_from.sell(team_to_sell_from.members[sell_unit_menu.get_selection()])
+        team_to_sell_from.sell(team_to_sell_from.members[sell_unit_menu.get_selection()], self._game_version)
 
     def _check_team_with_name_already_exists(self, team_name):
         for team in self._teams:
@@ -141,7 +218,7 @@ class BattleCreator():
             3: See Teams:
             4: Play the Battle!
             5: Exit to Main Menu
-            6: Enable Units From Other Versions of the Game
+            6: [Empty Option]
             7: Toggle Variance
             8: Toggle Initiative
             """
@@ -175,35 +252,10 @@ class BattleCreator():
                 loop = False
 
             elif selection == 6:
-                if self._game_version >= 2:
-                    print("Do you want to enable older/younger units? These may not work properly.")
-                    enable_other_input = ""
-                    while enable_other_input != "y" and enable_other_input != "n":
-                        try:
-                            enable_other_input = input("Please type \'y\' or \'n\': ").lower()
-                        except:
-                            logging.exception()
-
-                    if enable_other_input == "y":
-                        self._enable_other_version_units = True
-                    elif enable_other_input == "n":
-                        self._enable_other_version_units = False
+                pass
 
             elif selection == 7:
-                if self._game_version >= 2:
-                    if self._use_initiative:
-                        print("Initiative turned off. Units take their turns at the same time.")
-                        self._use_initiative = False
-                    else:
-                        print("Initiative turned on. Units will roll initiative.")
-                        self._use_initiative = True
+                self._toggle_use_initiative()
 
             elif selection == 8:
-                if self._game_version >= 3:
-                    if self._use_variance:
-                        print("Variability turned off. Units always roll max for attacks and initiative.")
-                        self._use_variance = False
-                    else:
-                        print("Variability turned on. Units roll for initiative and damage.")
-                        self._use_variance = True
-                
+                self._toggle_use_variance()

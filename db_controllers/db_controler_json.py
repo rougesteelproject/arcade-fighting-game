@@ -1,4 +1,4 @@
-from fnmatch import fnmatch
+
 import simplejson as json
 import logging
 import os
@@ -29,7 +29,7 @@ class JSONDB():
         except:
             logging.exception()
 
-    def get_unit_data_by_name(self, unit_name, game_version, enable_other_version_units):
+    def get_unit_data_by_name(self, unit_name, game_version):
         
         #load form a pack with that name
 
@@ -37,18 +37,17 @@ class JSONDB():
             with open(f'{unit_name.lower()}.json') as unit_json:
                 unit_data = json.load(unit_json)
 
-                if unit_data['game_version'] == game_version:
+                if unit_data['game_version'] >= game_version:
                     return unit_data
-                elif game_version >= 2 and unit_data['game_version'] >= 2 and enable_other_version_units:
-                    return unit_data
+
                 else:
                     return None
-                    #this may not be the right aproach. Maybe return None breaks things?
+                    #TODO this may not be the right aproach. Maybe return None breaks things?
                     
         except:
             logging.exception()
 
-    def get_unit_list_by_name(self, unit_name):
+    def get_unit_list_by_name(self, unit_name, game_version):
         #a way to search the file names, then load each file
 
         json_list = []
@@ -63,7 +62,8 @@ class JSONDB():
             try:
                 with open(f'./unit_data/{json_file}') as unit_json:
                     unit_data = json.load(unit_json)
-                    unit_data_list.append(unit_data)
+                    if unit_data['game_version'] >= game_version:
+                        unit_data_list.append(unit_data)
             except:
                 logging.exception()
 

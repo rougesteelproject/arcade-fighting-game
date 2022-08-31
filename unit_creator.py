@@ -7,6 +7,10 @@ class UnitCreator():
 
     def get_input_unit_stats(self, game_version):
 
+        max_attack = None
+        min_initiative = None
+        max_initiative = None
+
         name = input("Unit name: ")
 
         #note to self, keep this consistent with unit._check_stat_validity()
@@ -19,16 +23,15 @@ class UnitCreator():
             except ValueError:
                     logging.exception()
         
-        
         min_attack = -1
-        if game_version >= 2:
+        if game_version >= 3:
             while min_attack < 0:
                 print("Min attack cannot be negative!")
                 try:
                     min_attack = int(input("Minimum Attack: "))
                 except ValueError:
                         logging.exception()
-        else:
+        elif game_version >= 2:
             while min_attack < 0:
                 print("Attack cannot be negative!")
                 try:
@@ -44,13 +47,10 @@ class UnitCreator():
                     max_attack = int(input("Max Attack: "))
                 except ValueError:
                     logging.exception()
-        else:
-            max_attack = min_attack
 
         if game_version == 2:
-            min_initiative = 1
-            max_initiative = -1
-            while max_initiative < 0:
+            min_initiative = -1
+            while min_initiative < 0:
                 print("Initiative must be at least zero!")
                 try:
                     min_initiative = float(input("Initiative: "))
@@ -73,10 +73,6 @@ class UnitCreator():
                         max_initiative = float(input("Max Initiative: "))
                     except ValueError:
                         logging.exception()
-
-        else:
-            min_initiative = None
-            max_initiative = None
 
         return Unit(name, base_health, min_attack, max_attack, min_initiative, max_initiative, ai_type= "basic", game_version=game_version)
 
