@@ -1,0 +1,5 @@
+DATABASE
+
+Using Json and text files is far easier than SQL or Neo4j
+
+#TODO Google Firebase has a structure similar to Json. Maybe use that
