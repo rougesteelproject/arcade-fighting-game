@@ -4,30 +4,29 @@ from random import randint, uniform
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int, min_initiative: float, max_initiative: float, ai_types: list, raw_power_v1:int = None, raw_power_v2:int = None, raw_power_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int = None, min_initiative: float = None, max_initiative: float = None, ai_types: list = ['basic'], raw_power_v1:int = None, raw_power_v2:int = None, raw_power_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
 
         self.name = name
 
-        self._game_version = game_version
+        self._game_version = int(game_version)
 
-        self._base_health = base_health
+        self._base_health = int(base_health)
         
-        self._min_attack = min_attack
-        
-        if self._game_version >= 3: # variable attack was added in v3
-            self._max_attack = max_attack
+        self._min_attack = int(min_attack)
 
-        if self._game_version >= 2: #initiative added in v2
-            self._min_initiative = min_initiative
         
-        if self._game_version >= 3: #variable initiative added in v3
-            self._max_initiative = max_initiative
+        
+        if self._game_version >= 3: #variable initiative and attack was added in v3
+            self._max_initiative = float(max_initiative)
+            self._max_attack = int(max_attack)
+        elif self._game_version ==2: #initiative added in v2
+            self._min_initiative = float(min_initiative)
+            self._max_initiative = self._min_initiative
 
         self.attack_verb = attack_verb
 
         self._ai_types = ai_types
-
-        
+ 
         
         if raw_power_v3 == None and self._game_version == 3:
             self._set_raw_powers()
@@ -44,40 +43,39 @@ class Unit:
 
     def _check_stat_validity(self):
         #note to self, keep this consistent with unit_creator
-        self.is_invalid_v1 = False
-        self.is_invalid_v2 = False
-        self.is_invalid_v3 = False
+        self._is_invalid_v1 = False
+        self._is_invalid_v2 = False
+        self._is_invalid_v3 = False
 
         if self._base_health < 1:
             print("Base health must be at least 1!") 
-            self.is_invalid_v1 = True
-            self.is_invalid_v2 = True
-            self.is_invalid_v3 = True
+            self._is_invalid_v1 = True
+            self._is_invalid_v2 = True
+            self._is_invalid_v3 = True
         
         if self._min_attack < 0:
             print("Min attack cannot be negative!")
-            self.is_invalid_v1 = True
-            self.is_invalid_v2 = True
-            self.is_invalid_v3 = True
+            self._is_invalid_v1 = True
+            self._is_invalid_v2 = True
+            self._is_invalid_v3 = True
 
         if self._game_version >= 3  and self._max_attack < self._min_attack:
             print("Max attack must be greater than or equal to min attack!")
 
-            self.is_invalid_v3 = True
+            self._is_invalid_v3 = True
 
         if self._game_version >= 3 and (self._max_initiative < self._min_initiative):
             print("Max initiative must be greater than or equal to min!")
 
-            self.is_invalid_v3 = True
+            self._is_invalid_v3 = True
         
         if self._game_version >= 2 and self._min_initiative < 0:
             print("min initiative cannot be negative. It must be at least zero!")
-            self.is_invalid_v2 = True
+            self._is_invalid_v2 = True
 
         if self._game_version >= 3 and self._min_initiative == 0:
             print("min initiative must be greater than zero!")
-            self.is_invalid_v3 = True
-
+            self._is_invalid_v3 = True
 
     def _set_ai(self, ai_type):
         if ai_type == 'basic':
@@ -93,7 +91,7 @@ class Unit:
     def _set_initiative_value(self):
         self._initiative_value = ((math.sqrt(self._max_initiative/self._min_initiative))*self._min_initiative)**1.1
 
-    def _round_one_minimum(base_raw_power):
+    def _round_one_minimum(self, base_raw_power):
 
         if round(base_raw_power) <= 0:
             rounded_raw_power = 1
@@ -104,12 +102,11 @@ class Unit:
 
     def _set_raw_power_v1(self):
         raw_power_v1  = (2 * (self._base_health + (5 * self._min_attack)) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
-        self.raw_power_v1 = self.round_one_minimum(raw_power_v1)
+        self.raw_power_v1 = self._round_one_minimum(raw_power_v1)
 
     def _set_raw_power_v2(self):
         raw_power_v2 = (2 * (self._base_health + (5 * self._min_attack * (self._max_initiative ** 1.1))) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
         self.raw_power_v2 = self._round_one_minimum(raw_power_v2)
-
 
     def _set_raw_power_v3(self):
         self._set_attack_value()
@@ -119,7 +116,6 @@ class Unit:
 
         raw_power_v3 = (2*(self._base_health + self._offensive_power) + 3*(math.sqrt(self._base_health * self._offensive_power) *2))/5
         self.raw_power_v3 = self._round_one_minimum(raw_power_v3)
-
 
     def _set_raw_powers(self):
         
@@ -142,7 +138,6 @@ class Unit:
                 self._set_raw_power_v1()
             else:
                 self.raw_power_v1 = None
-
 
     def get_raw_power(self, game_version):
 

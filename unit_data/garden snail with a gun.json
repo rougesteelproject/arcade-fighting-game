@@ -1,0 +1,1 @@
+{"name": "Garden Snail With A Gun", "base_health": 400, "min_attack": 50, "max_attack": 400, "min_initiative": 0.1, "max_initiative": 0.3, "ai_types": ["basic"], "game_version": 3, "raw_power_v1": 639, "raw_power_v2": 566, "raw_power_v3": 532, "attack_verb": "attacked"}

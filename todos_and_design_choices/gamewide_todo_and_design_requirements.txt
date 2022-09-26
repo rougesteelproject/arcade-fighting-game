@@ -1,7 +1,20 @@
-#TODO a minimalist clickable ui
-
 #TODO check for bugs
 
+UI
+Instead of having modules calling each other back and forth, prefer
+1) Acting independantly
+2) Asking the game_loop
+
+Instead of greying out teams, simply remove them
+
+#The ui should check/uncheck boxes on it's own instead of waiting for battle_creator
+#This said, battle_creator should be the one triggering the variance or initiative labels, so that the actual state is accurately reflected.
+
+#TODO go back to the main menu when a battle's over
+#TODO display unit stats in search results and team list
+#TODO the ui_handler should have a title
+
+#TODO a gui for the battle_coordinator
 
 GAME VERSIONS
 # v2 added initiative, v3 added variability
@@ -10,6 +23,8 @@ GAME VERSIONS: Backwards COMPATIBILITY
 #only Backwards compatibility, so we can use v3 units in v2 and v2 in v1
     #Don't set max_initiative or max_attack if not v3, don't set min_initiative if not at least v2
 
+# have the db_control only save relevant values based on game version
+
 # version only matters on unit creation and battle_creator
 
 # ask for the game version within battle_creator, then warn the user which units will be cut if going up a version
@@ -17,8 +32,15 @@ GAME VERSIONS: Backwards COMPATIBILITY
 
 # Have the db controler check game versions match before even giving it to the battle battle_creator
 
+STATS
+#base_health must be >0, so far >= 1
+#min_attack must be > 0, so far >= 1
+#max_attack must be >= min_attack
+#min_initiative must be > 0, so far >= 0.1
+#max_initiative must be >= min_initiative 
 
-#TODO AI
+#TODO 
+AI
 
 # -- AI is difficult with modularity [in the pricing algorithm] 
 
@@ -27,7 +49,8 @@ GAME VERSIONS: Backwards COMPATIBILITY
     -- #TODO start with AI pricing algorithm that's different depending on initiative/no init [v2] and variance/no variance [v3]
 
 
-#TODO ALGORITHM MODULARITY
+#TODO 
+ALGORITHM MODULARITY
 # build our foundation for modularity [in the pricing algorithm]
 # the eventual goal is being totally modular.
 # the whole system, including the input process, can switch itself around based on what's turned on and off
@@ -35,9 +58,9 @@ GAME VERSIONS: Backwards COMPATIBILITY
     -- #TODO a way to adjust unit._set_initiative_value() [v3 pricing] so we can make 'doormat'/'punching bag' units with zero initiative
         # assuming 0/0 is one, the price of a 0/0 init would be (2/5) * (base_health), before rounding [v3]
 
-
+OTHER
 #unit prices are rounded to the nearest whole number (min 1) from floats. Watch for floating-point errors
 
-
+PYTHON MODULARITY
 # battle_coordinator only needs to know yes or no initiative, yes or no variability/rolling
     # The default without initiative is everything acting simultaneously

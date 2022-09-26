@@ -1,6 +1,5 @@
 from ais.basic_ai import BasicAI
 
-
 class BattleCoordinator():
     def __init__(self, teams, use_initiative, use_variance) -> None:
         self._teams = teams
@@ -38,12 +37,16 @@ class BattleCoordinator():
             print(f'Team \"{self._victor.name}\" has won!')
 
     def _do_game_tick(self, unit, game_data):
-        #TODO battle_coordinator imports and uses BattleData
-        if unit.ai_type == "basic":
-            if self._basic_ai == None:
-                self._basic_ai == BasicAI()
-            self._basic_ai.do_game_tick(game_data['targets'])
-            #TODO change to getting all enemies of a given unit
+        #TODO battle_coordinator imports and uses BattleData() or something
+        
+        #TODO there's gotta be a better way to do this. Maybe battle_coordinator has a list of AI?
+
+        for ai_type in unit._ai_types:
+            if ai_type == "basic":
+                if not hasattr(self, '_basic_ai'):
+                    self._basic_ai = BasicAI()
+                return self._basic_ai.do_game_tick(unit, game_data['targets'], self._use_variance)
+                #TODO change to getting all enemies of a given unit
 
     def _do_round(self):
         
@@ -56,15 +59,14 @@ class BattleCoordinator():
             self._initiative_threshold = 0
 
         for active_unit in active_units:
-            if self._use_initiative:
-                if active_unit.get_initiative_bar() >= self._initiative_threshold:
-                    unit_can_attack = active_unit.get_is_alive()
+            if self._use_initiative and active_unit.get_initiative_bar() >= self._initiative_threshold:
+                unit_can_attack = active_unit.get_is_alive()
             else:
                 unit_can_attack = True
 
-            if unit_can_attack and self._victor == None:
-                target_list = self._get_targets(active_unit)
-                damage, target = active_unit.do_game_tick(target_list, use_variance = self._use_variance)
+            if unit_can_attack and self._victor == None: 
+                game_data = {'targets' : self._get_targets(active_unit)}
+                damage, target = self._do_game_tick(active_unit, game_data)
                 
                 if self._use_initiative:
                     active_unit.expend_initiative(self._initiative_threshold)

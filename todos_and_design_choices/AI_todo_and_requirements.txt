@@ -2,6 +2,8 @@
 #TODO units have a list of AI types in order of priority [eg "swarmer" falls back to "random"]
 #TODO AI can call other AI to change behaviors under certian conditions
 
+#TODO An AI needs to be able to reply back that it has no valid targets so that the coordinator can check the next lowest AI
+
 #TODO battle_coordinator creates a separate battle_data module so the code's cleaner
 
 *Swarming* needs a target list made of units attacked by the same unit type as it
@@ -42,3 +44,7 @@ but you make each step harder by some factor "n" as you ask or predict the AI's 
 Mindful can't ask or predict another Mindful, because it makes an infinite loop and is an example of the Halting Problem.
 
 [Technically, you could say it's "just" `(na)^2e` posibilities, but this ignores the fact that you are usually unlikely to kill someone if they've killed you first.]
+
+REJECT PILE 
+# have AI pass back a curated list of targets, and if that's empty, the original list
+# having curated the list, why not just act?

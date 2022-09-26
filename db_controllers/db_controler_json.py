@@ -16,7 +16,18 @@ class JSONDB():
 
     def save_unit(self, unit):
         
-        unit_dict = {"name": unit.name, "base_health": unit._base_health,"min_attack": unit._min_attack, "max_attack": unit._max_attack, "min_initiative": unit._min_initiative,"max_initiative": unit.get_max_initiative() ,"ai_type" : unit._ai.name, "game_version": unit._game_version, "raw_power_v1": unit.get_raw_power(1), "raw_power_v2": unit.get_raw_power(2), "raw_power_v3": unit.get_raw_power(3), "attack_verb": unit.attack_verb}
+        unit_dict = {"name": unit.name, "base_health": unit._base_health,"min_attack": unit._min_attack ,"ai_types" : unit._ai_types, "game_version": unit._game_version, "raw_power_v1": unit.get_raw_power(1), "attack_verb": unit.attack_verb}
+
+        unit_game_version = unit_dict['game_version']
+
+        if  unit_game_version >= 2:
+            unit_dict['min_initiative'] = unit._min_initiative
+            unit_dict["raw_power_v2"] = unit.get_raw_power(2)
+
+            if unit_game_version >= 3:
+                unit_dict['max_initiative'] = unit.get_max_initiative()
+                unit_dict['max_attack'] = unit._max_attack
+                unit_dict["raw_power_v3"] = unit.get_raw_power(3)
 
         try:
             pack_name = f'./unit_data/{unit.name.lower()}.json'
@@ -42,7 +53,6 @@ class JSONDB():
 
                 else:
                     return None
-                    #TODO this may not be the right aproach. Maybe return None breaks things?
                     
         except:
             logging.exception()
@@ -50,22 +60,40 @@ class JSONDB():
     def get_unit_list_by_name(self, unit_name, game_version):
         #a way to search the file names, then load each file
 
+        game_version = int(game_version)
+
         json_list = []
 
         for file in os.listdir('unit_data'):
             if fnmatch.fnmatch(file, f'*{unit_name}*.json'):
                 json_list.append(file)
 
-        unit_data_list = []
+        self.unit_data_list = []
 
         for json_file in json_list:
             try:
                 with open(f'./unit_data/{json_file}') as unit_json:
                     unit_data = json.load(unit_json)
-                    if unit_data['game_version'] >= game_version:
-                        unit_data_list.append(unit_data)
+                    if int(unit_data['game_version']) >= game_version:
+                        self.unit_data_list.append(unit_data)
             except:
-                logging.exception()
+                logging.exception(f"No unit named {unit_name}")
 
 
-        return unit_data_list
+        return self.unit_data_list
+
+    def search_units_by_name(self, unit_name, game_version):
+        search_bar_units_data = self.get_unit_list_by_name(unit_name, game_version)
+
+        unit_prompts = []
+        
+        if len(search_bar_units_data) != 0:
+            for index, unit_data in enumerate(search_bar_units_data):
+
+                unit_power = unit_data[f'raw_power_v{game_version}']
+                #diferent power for diferent game versions
+
+                unit_prompts.append(f'{index}: {unit_data["name"]}: {unit_power} \n')
+
+
+            return unit_prompts

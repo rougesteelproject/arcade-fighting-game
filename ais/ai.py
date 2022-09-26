@@ -2,8 +2,7 @@ from random import choice
 
 
 class AI():
-    def __init__(self, callback_unit) -> None:
-        self._callback_unit = callback_unit
+    def __init__(self) -> None:
 
         self.name = "ai_class"
 
@@ -20,9 +19,9 @@ class AI():
 
         return damage, target
 
-    def _decide_to_attack(self):
+    def _decide_to_attack(self, use_variance):
         if True:
-            damage, target = self._attack()
+            damage, target = self._attack(use_variance)
             
         else:
             damage = None
@@ -31,7 +30,9 @@ class AI():
         return damage, target
 
 
-    def do_game_tick(self, targets, use_variance):
+    def do_game_tick(self, calling_unit, targets, use_variance):
+        self._callback_unit = calling_unit
+
         self._update_target_list(targets)
         damage, target = self._decide_to_attack(use_variance)
 
