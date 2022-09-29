@@ -6,12 +6,15 @@ from unit import Unit
 
 from battle_coordinator import BattleCoordinator
 from db_controllers.db_controler_json import JSONDB
+from db_controllers.db_controler_firebase_firestore import FirebaseDB
+
+from copy import deepcopy
 
 import logging
 
 class GameLoop():
     def __init__(self) -> None:
-        self._database_controler = JSONDB()
+        self._database_controler = FirebaseDB()
         
         self._ui_handler = TKUIHandler(self)
 
@@ -27,8 +30,8 @@ class GameLoop():
     def run_unit_creator_menu(self):
         self._ui_handler.create_unit_creator_menu()
 
-    def save_unit(self, **kwargs):
-        self._database_controler.save_unit(Unit(**kwargs))
+    def save_unit(self, unit):
+        self._database_controler.save_unit(unit)
 
     def create_battle(self):
         self._ui_handler.create_battle_creator_menu()
@@ -62,9 +65,10 @@ class GameLoop():
     def battle_creator_add_team_ui(self):
         self._ui_handler.battle_creator_add_team()
 
-    def battle_creator_buy_unit(self, unit, team_name):
-        unit_data = self._database_controler.unit_data_list[unit]
-        self._battle_creator.buy_unit(unit_data, team_name)
+    def battle_creator_buy_unit(self, unit_index, team_name):
+        unit = deepcopy(self._database_controler.unit_data_list[unit_index])
+        #Make a copy of the unit so it's not the same as the one in the db_cont
+        self._battle_creator.buy_unit(unit, team_name)
 
     def battle_creator_use_initiative(self, use_initiative):
         self._battle_creator.use_initiative = use_initiative
@@ -75,7 +79,7 @@ class GameLoop():
         self.battle_creator_disable_variance(use_variance)
 
     def search_units_by_name(self, query, game_version):
-        return self._database_controler.search_units_by_name(query, game_version)
+        return self._database_controler.get_unit_list_by_name(query, game_version)
 
     def battle_creator_set_money_limit(self, limit):
         self._battle_creator._set_money_limit(limit)

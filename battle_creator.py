@@ -67,7 +67,7 @@ class BattleCreator():
         self._game_loop.battle_creator_disable_initiative(self.use_initiative)
         self._game_loop.battle_creator_disable_variance(self.use_variance)
 
-    def buy_unit(self, unit_data, team_name):
+    def buy_unit(self, unit, team_name):
 
             for team in self._teams:
                 if team.name == team_name:
@@ -75,17 +75,8 @@ class BattleCreator():
                     break
 
             try:
-                #TODO there's gotta be a better way
-                if unit_data['game_version'] >= 3:
-                    unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], max_attack=unit_data['max_attack'], min_initiative=unit_data['min_initiative'], max_initiative=unit_data['max_initiative'], ai_types=unit_data['ai_types'], raw_power_v1=unit_data['raw_power_v1'], raw_power_v2=unit_data['raw_power_v2'], raw_power_v3=unit_data['raw_power_v3'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
-                elif unit_data['game_version'] == 2:
-                    unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], min_initiative=unit_data['min_initiative'], ai_types=unit_data['ai_types'], raw_power_v1=unit_data['raw_power_v1'], raw_power_v2=unit_data['raw_power_v2'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
-                else:
-                    unit_selection = Unit(name=unit_data['name'], base_health=unit_data['base_health'], min_attack=unit_data['min_attack'], ai_types=unit_data['ai_types'], raw_power_v1=unit_data['raw_power_v1'], game_version=unit_data['game_version'], attack_verb=unit_data['attack_verb'])
-                unit_selection._check_stat_validity()
 
-
-                team_selection.buy(unit_selection, self._game_version, self._money_limit)
+                team_selection.buy(unit, self._game_version, self._money_limit)
             except:
                 logging.exception("Failure to buy unit")
 

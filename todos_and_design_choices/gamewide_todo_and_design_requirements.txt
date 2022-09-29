@@ -1,25 +1,42 @@
 #TODO check for bugs
 
+DATA STORAGE
+Returning units instead of dicts makes the code more readable at the cost of a smidge of memory
+    The only issue was buying a unit from the db_controll should make a new version of the unit, 
+    so we import copy.deepcopy() from the standard library
+# have the db_control only save relevant values based on game version
+
+DATA STORAGE - FIRESTORE
+Because Firestore does not support a %LIKE% opperation, searching for names is case-sensitive
+    It will therefore only ever return one unit, max
+
+# Have the db controler check game versions match before even giving it to the battle battle_creator
+
 UI
 Instead of having modules calling each other back and forth, prefer
 1) Acting independantly
+    Instead of greying out teams, simply remove them
+    The ui should check/uncheck boxes on it's own instead of waiting for battle_creator
+        Except: battle_creator should be the one triggering the variance or initiative labels, so that the actual state is accurately reflected.
 2) Asking the game_loop
-
-Instead of greying out teams, simply remove them
-
-#The ui should check/uncheck boxes on it's own instead of waiting for battle_creator
-#This said, battle_creator should be the one triggering the variance or initiative labels, so that the actual state is accurately reflected.
 
 #TODO go back to the main menu when a battle's over
 #TODO display unit stats in search results and team list
+    #TODO when ai is implemented, have an option dropdown of ai choices before buying a unit
+        #TODO have this display some kind of price modifier and the final price
 #TODO the ui_handler should have a title
+
+#TODO attack_verb in unit_creator
+#TODO the ability to add ai types in unit_creator
+#   check save_unit in unit_creator
 
 #TODO a gui for the battle_coordinator
 
 GAME VERSIONS
-# v2 added initiative, v3 added variability
+v2 - initiative 
+v3 - variability
 
-GAME VERSIONS: Backwards COMPATIBILITY
+GAME VERSIONS: BACKWARDS COMPATIBILITY
 #only Backwards compatibility, so we can use v3 units in v2 and v2 in v1
     #Don't set max_initiative or max_attack if not v3, don't set min_initiative if not at least v2
 
@@ -39,8 +56,7 @@ STATS
 #min_initiative must be > 0, so far >= 0.1
 #max_initiative must be >= min_initiative 
 
-#TODO 
-AI
+#TODO AI
 
 # -- AI is difficult with modularity [in the pricing algorithm] 
 
@@ -49,7 +65,6 @@ AI
     -- #TODO start with AI pricing algorithm that's different depending on initiative/no init [v2] and variance/no variance [v3]
 
 
-#TODO 
 ALGORITHM MODULARITY
 # build our foundation for modularity [in the pricing algorithm]
 # the eventual goal is being totally modular.
@@ -64,3 +79,12 @@ OTHER
 PYTHON MODULARITY
 # battle_coordinator only needs to know yes or no initiative, yes or no variability/rolling
     # The default without initiative is everything acting simultaneously
+
+# version only matters on unit creation and battle_creator
+
+Instead of having modules calling each other back and forth, prefer
+1) Acting independantly
+    Instead of greying out teams, simply remove them
+    The ui should check/uncheck boxes on it's own instead of waiting for battle_creator
+        Except: battle_creator should be the one triggering the variance or initiative labels, so that the actual state is accurately reflected.
+2) Asking the game_loop

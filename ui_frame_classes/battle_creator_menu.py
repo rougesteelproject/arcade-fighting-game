@@ -194,9 +194,21 @@ class BattleCreatorMenu(tk.Frame):
         self._get_team_updates()
 
     def _get_search_results(self):
-        results = self._game_loop.search_units_by_name(self._search_bar_holder.get(), self.game_version_holder.get())
+        game_version = int(self.game_version_holder.get())
 
-        self._search_results_holder.set(results)
+        results = self._game_loop.search_units_by_name(self._search_bar_holder.get(), game_version)
+
+        unit_prompts = []
+        
+        if len(results) != 0:
+            for index, unit_data in enumerate(results):
+
+                unit_power = unit_data[f'raw_power_v{game_version}']
+                #diferent power for diferent game versions
+
+                unit_prompts.append(f'{index}: {unit_data["name"]}: {unit_power} \n')
+
+        self._search_results_holder.set(unit_prompts)
 
         self._adjust_listbox_width(self.listbox_search_results)
 
@@ -287,7 +299,8 @@ class BattleCreatorMenu(tk.Frame):
                     self._grey_out_variance(use_variance = False)
 
             self._game_loop.battle_creator_set_game_version(new_game_version, sell_outdated_units)
-            self._get_team_updates()     
+            self._get_team_updates()
+            self._get_search_results() #this will update the prices in the buy section      
 
         self._switch_version_popup.destroy()
 

@@ -22,3 +22,5 @@ Are you sure you want to switch game version?'''
 WARNING_OUTDATED_UNITS = '''Moving from a lower game version to a higher one will sell units from earlier versions.'''
 
 ERROR_LOG_URI = "debug/errors.log"
+
+FIREBASE_PROJECT_ID = "Piono-Pricing"

@@ -2,6 +2,8 @@ import tkinter as tk
 import constants
 from sys import maxsize
 
+from unit import Unit
+
 class UnitCreatorMenu(tk.Frame):
     def __init__(self, callback_handler) -> None:
         super().__init__(callback_handler.top_level)
@@ -68,7 +70,7 @@ class UnitCreatorMenu(tk.Frame):
         self.spinbox_max_init.pack(side="top")
 
         self.button_save_unit = tk.Button(self)
-        self.button_save_unit.configure(text="Create", command=lambda :self._game_loop.save_unit(name = self.entry_name.get(),base_health = self.hp_holder.get(), min_attack= self.spinbox_min_attack.get(), max_attack = self.spinbox_max_attack.get(), min_initiative = self.spinbox_min_init.get(), max_initiative = self.spinbox_max_init.get(), ai_types= ["basic"], game_version=self.game_version_holder.get() ))
+        self.button_save_unit.configure(text="Create", command=lambda :self._save_unit())
         self.button_save_unit.pack(side="top")
 
         self.button_exit_unit_creator = tk.Button(self)
@@ -78,6 +80,23 @@ class UnitCreatorMenu(tk.Frame):
         self.pack(side="top")
 
         self.ready = True
+
+    def _save_unit(self):
+        game_version = int(self.game_version_holder.get())
+
+        unit_dict = {'name' : self.entry_name.get(),
+        'base_health' : self.hp_holder.get(),
+        'min_attack': self.spinbox_min_attack.get(),
+        'ai_types' : ["basic"], 'attack_verb': 'attacked',
+        'game_version' : game_version}
+
+        if game_version >= 2:
+            unit_dict.update({'min_initiative': self.spinbox_min_init.get()})
+        
+        if game_version >= 3:
+            unit_dict.update({'max_attack': self.spinbox_max_attack.get(), 'max_initiative': self.spinbox_max_init.get()})        
+
+        self._game_loop.save_unit(Unit.from_dict(unit_dict))
 
     #these update functions work even when the user can input numbers directly into the spinbox
     #via the textvariable

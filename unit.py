@@ -4,7 +4,7 @@ from random import randint, uniform
 import constants
 
 class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, max_attack: int = None, min_initiative: float = None, max_initiative: float = None, ai_types: list = ['basic'], raw_power_v1:int = None, raw_power_v2:int = None, raw_power_v3:int = None, game_version:float = 3, attack_verb:str = "attacked") -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, ai_types: list = ['basic'], game_version:float = 3, attack_verb:str = "attacked") -> None:
 
         self.name = name
 
@@ -13,33 +13,43 @@ class Unit:
         self._base_health = int(base_health)
         
         self._min_attack = int(min_attack)
-
+        self._max_attack = self._min_attack
         
-        
-        if self._game_version >= 3: #variable initiative and attack was added in v3
-            self._max_initiative = float(max_initiative)
-            self._max_attack = int(max_attack)
-        elif self._game_version ==2: #initiative added in v2
-            self._min_initiative = float(min_initiative)
-            self._max_initiative = self._min_initiative
 
         self.attack_verb = attack_verb
 
         self._ai_types = ai_types
- 
-        
-        if raw_power_v3 == None and self._game_version == 3:
-            self._set_raw_powers()
-        elif raw_power_v2 == None and self._game_version == 2:
-            self._set_raw_powers()
-        elif raw_power_v1 == None and self._game_version == 1:
-            self._set_raw_powers()
-        else:
-            self.raw_power_v1 = raw_power_v1
-            self.raw_power_v2 = raw_power_v2
-            self.raw_power_v3 = raw_power_v3
 
-        self.id = 0
+    @staticmethod
+    def from_dict(source):
+
+        unit = Unit(name = source[u'name'], base_health = source[u'base_health'],  min_attack = source[u'min_attack'], ai_types= source[u'ai_types'], game_version= source[u'game_version'], attack_verb= source['attack_verb'])
+        
+        if u'max_attack' in source:
+            unit._max_attack = source[u'max_attack']
+
+        if u'min_initiative' in source:
+            unit._min_initiative = source[u'min_initiative']
+            if u'max_initiative' in source:
+                unit._max_initiative = source[u'max_initiative']
+            else:
+                unit._max_initiative = unit._min_initiative
+
+        if u'raw_power_v3' in source:
+            unit.raw_power_v3 = source[u'raw_power_v3']
+        
+            
+        if u'raw_power_v2' in source:
+            unit.raw_power_v2 = source[u'raw_power_v2']
+        
+        if u'raw_power_v1' in source:
+            unit.raw_power_v1 = source[u'raw_power_v1']
+            
+
+        return unit
+
+    def to_dict(self):
+        return self.__dict__
 
     def _check_stat_validity(self):
         #note to self, keep this consistent with unit_creator
@@ -120,6 +130,7 @@ class Unit:
     def _set_raw_powers(self):
         
         self._check_stat_validity()
+        #this is for when a unit is created by db_cont
 
         if self._game_version >= 3:
             if self._is_invalid_v3 == False:
@@ -140,6 +151,9 @@ class Unit:
                 self.raw_power_v1 = None
 
     def get_raw_power(self, game_version):
+
+        if self._game_version >= game_version and not hasattr(self, f'raw_power_v{game_version}'):
+            self._set_raw_powers()
 
         if game_version == 3:
             raw_power = self.raw_power_v3
@@ -187,9 +201,6 @@ class Unit:
         else:
             roll = self._max_initiative
         self._initiative_bar += roll
-
-    def set_id(self, id):
-        self.id = id
 
     def expend_initiative(self, initiative_threshold):
         self._initiative_bar -= initiative_threshold
