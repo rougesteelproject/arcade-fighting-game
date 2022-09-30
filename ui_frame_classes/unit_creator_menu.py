@@ -4,6 +4,8 @@ from sys import maxsize
 
 from unit import Unit
 
+#TODO fields for gmail and for modpack
+
 class UnitCreatorMenu(tk.Frame):
     def __init__(self, callback_handler) -> None:
         super().__init__(callback_handler.top_level)

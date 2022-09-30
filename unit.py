@@ -3,6 +3,8 @@ import math
 from random import randint, uniform
 import constants
 
+#TODO add fields for "Modpack" and "Creator_Email"
+
 class Unit:
     def __init__(self, name: str, base_health: int, min_attack: int, ai_types: list = ['basic'], game_version:float = 3, attack_verb:str = "attacked") -> None:
 
