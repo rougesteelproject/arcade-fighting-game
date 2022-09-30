@@ -147,13 +147,3 @@ class UnitCreatorMenu(tk.Frame):
             self.spinbox_max_attack.configure(state=tk.DISABLED)
             self.spinbox_min_init.configure(state=tk.DISABLED)
             self.spinbox_max_init.configure(state=tk.DISABLED)
-
-
-    def _get_all_sub_widgets(frame):
-        _list = frame.winfo_children()
-
-        for item in _list :
-            if item.winfo_children() :
-                _list.extend(item.winfo_children())
-
-        return _list
