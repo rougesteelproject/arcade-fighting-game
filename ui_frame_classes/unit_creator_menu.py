@@ -81,8 +81,6 @@ class UnitCreatorMenu(tk.Frame):
 
         self.pack(side="top")
 
-        self.ready = True
-
     def _save_unit(self):
         game_version = int(self.game_version_holder.get())
 
