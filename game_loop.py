@@ -19,14 +19,13 @@ class GameLoop():
         self._ui_handler = TKUIHandler(self)
 
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename= constants.ERROR_LOG_URI, encoding='utf-8', level=logging.ERROR, filemode='w')
-
-    def run(self):
+        
         self.run_main_menu()
+        self._ui_handler.run()
 
     def run_main_menu(self):
         self._ui_handler.create_main_menu()
-        self._ui_handler.run()
-
+        
     def run_unit_creator_menu(self):
         self._ui_handler.create_unit_creator_menu()
 
@@ -109,4 +108,3 @@ class GameLoop():
         self._ui_handler.top_level.destroy()
 
 gameloop = GameLoop()
-gameloop.run()
