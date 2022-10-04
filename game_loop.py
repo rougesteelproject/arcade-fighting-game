@@ -2,13 +2,15 @@ import constants
 from battle_creator import BattleCreator
 from tk_ui_handler import TKUIHandler
 
-from unit import Unit
-
 from battle_coordinator import BattleCoordinator
-from db_controllers.db_controler_json import JSONDB
-from db_controllers.db_controler_firebase_firestore import FirebaseDB
+
+from db_controllers.db_controler_firestore import FirebaseDB
 
 from copy import deepcopy
+
+from sign_in_handler import SignInHandler
+
+from google.oauth2.credentials import Credentials
 
 import logging
 
@@ -18,14 +20,35 @@ class GameLoop():
         
         self._ui_handler = TKUIHandler(self)
 
+        self._sign_in_handler = SignInHandler()
+
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename= constants.ERROR_LOG_URI, encoding='utf-8', level=logging.ERROR, filemode='w')
 
-    def run(self):
-        self.run_main_menu()
+        self.run_sign_in_prompt()
+        self._ui_handler.run()
+
+    def sign_in(self, email, password):
+        #Credit to Bob Thomas
+
+        response = self._sign_in_handler.sign_in_email_pass(email, password)
+        
+        if 'error' in response:
+            self.run_sign_in_prompt(error = response['error']['message'])
+        else:
+            self._user_email = email
+            
+            # Use google.oauth2.credentials and the response object to create the correct user credentials
+            credentials = Credentials(response['idToken'], response['refreshToken'])
+
+            self._database_controler = FirebaseDB(credentials)
+
+            self.run_unit_creator_menu()
+
+    def run_sign_in_prompt(self, error = None):
+        self._ui_handler.create_sign_in_menu(error)
 
     def run_main_menu(self):
         self._ui_handler.create_main_menu()
-        self._ui_handler.run()
 
     def run_unit_creator_menu(self):
         self._ui_handler.create_unit_creator_menu()
@@ -109,4 +132,3 @@ class GameLoop():
         self._ui_handler.top_level.destroy()
 
 gameloop = GameLoop()
-gameloop.run()

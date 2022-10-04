@@ -2,6 +2,7 @@ import tkinter as tk
 from ui_frame_classes.battle_creator_menu import BattleCreatorMenu
 from ui_frame_classes.main_menu import MainMenu
 from ui_frame_classes.unit_creator_menu import UnitCreatorMenu
+from ui_frame_classes.sign_in_menu import SignInMenu
 
 class TKUIHandler:
     def __init__(self, game_loop) -> None:
@@ -16,6 +17,9 @@ class TKUIHandler:
             self.top_level.configure(height=800, width=800)
 
     def clear_screen(self):
+        if hasattr(self, "_sign_in_menu"):
+            self._sign_in_menu.destroy()
+        
         if hasattr(self, "_battle_creator_menu"):
             self._battle_creator_menu.destroy()
 
@@ -24,6 +28,11 @@ class TKUIHandler:
 
         if hasattr(self, "_unit_creator_menu"):
             self._unit_creator_menu.destroy()
+
+    def create_sign_in_menu(self, error_message):
+        self.clear_screen()
+
+        self._sign_in_menu = SignInMenu(self, error_message)
     
     def create_main_menu(self):
         self.clear_screen()

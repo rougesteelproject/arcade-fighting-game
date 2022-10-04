@@ -81,22 +81,20 @@ class UnitCreatorMenu(tk.Frame):
 
         self.pack(side="top")
 
-        self.ready = True
-
     def _save_unit(self):
         game_version = int(self.game_version_holder.get())
 
-        unit_dict = {'name' : self.entry_name.get(),
-        'base_health' : self.hp_holder.get(),
-        'min_attack': self.spinbox_min_attack.get(),
-        'ai_types' : ["basic"], 'attack_verb': 'attacked',
-        'game_version' : game_version}
+        unit_dict = {'_name' : self.entry_name.get(),
+        '_base_health' : self.hp_holder.get(),
+        '_min_attack': self.spinbox_min_attack.get(),
+        '_ai_types' : ["basic"], '_attack_verb': 'attacked',
+        '_game_version' : game_version}
 
         if game_version >= 2:
-            unit_dict.update({'min_initiative': self.spinbox_min_init.get()})
+            unit_dict.update({'_min_initiative': self.spinbox_min_init.get()})
         
         if game_version >= 3:
-            unit_dict.update({'max_attack': self.spinbox_max_attack.get(), 'max_initiative': self.spinbox_max_init.get()})        
+            unit_dict.update({'_max_attack': self.spinbox_max_attack.get(), 'max_initiative': self.spinbox_max_init.get()})        
 
         self._game_loop.save_unit(Unit.from_dict(unit_dict))
 
@@ -149,13 +147,3 @@ class UnitCreatorMenu(tk.Frame):
             self.spinbox_max_attack.configure(state=tk.DISABLED)
             self.spinbox_min_init.configure(state=tk.DISABLED)
             self.spinbox_max_init.configure(state=tk.DISABLED)
-
-
-    def _get_all_sub_widgets(frame):
-        _list = frame.winfo_children()
-
-        for item in _list :
-            if item.winfo_children() :
-                _list.extend(item.winfo_children())
-
-        return _list

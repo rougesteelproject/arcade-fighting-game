@@ -22,3 +22,11 @@ Are you sure you want to switch game version?'''
 WARNING_OUTDATED_UNITS = '''Moving from a lower game version to a higher one will sell units from earlier versions.'''
 
 ERROR_LOG_URI = "debug/errors.log"
+
+FIREBASE_API_KEY = "AIzaSyC_MNFuibE5GlmJMqLqEkrjgoAGt-4DRk8"
+#Unlike any other api key, Google says this is safe to expose, 
+# so long as you restrict api requesttraffic to your billing expectations to prevent attacks
+
+FIREBASE_REST_API = "https://identitytoolkit.googleapis.com/v1/accounts"
+
+FIRESTORE_DB_NAME = "piono-pricing"

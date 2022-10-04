@@ -1,33 +1,29 @@
 import constants
-from unit import Unit
-
-import firebase_admin
-from firebase_admin import firestore
-
 import logging
 
-class FirebaseDB():
-    def __init__(self) -> None:
-        self._project_id = constants.FIREBASE_PROJECT_ID
+from unit import Unit
 
-        self._app = firebase_admin.initialize_app()
-        self._db = firestore.client()
+from google.cloud.firestore import Client, DELETE_FIELD, ArrayUnion, ArrayRemove
+
+class FirebaseDB():
+    def __init__(self, credentials) -> None:
+
+        self._db = Client(constants.FIRESTORE_DB_NAME, credentials)
 
 #CREATE
     def _create(self, collection_id:str, document_id:str = None, create_dict:dict = {}, merge:bool = False):
-    #Three options to write data:
-        #1) Set the data of a document within a collection, explicitly specifying a document identifier.
-        #2) Add a new document to a collection. In this case, Cloud Firestore automatically generates the document identifier.
-        #3) Create an empty document with an automatically generated identifier, and assign data to it later.
+        #Three options to write data:
+            #1) Set the data of a document within a collection, explicitly specifying a document identifier.
+            #2) Add a new document to a collection. In this case, Cloud Firestore automatically generates the document identifier.
+            #3) Create an empty document with an automatically generated identifier, and assign data to it later.
 
-    #Cloud Firestore lets you write a variety of data types inside a document, 
-    # including strings, booleans, numbers, dates, null, and nested arrays and objects. 
-    # Cloud Firestore always stores numbers as doubles, regardless of what type of number you use in your code.
+        #Cloud Firestore lets you write a variety of data types inside a document, 
+        # including strings, booleans, numbers, dates, null, and nested arrays and objects. 
+        # Cloud Firestore always stores numbers as doubles, regardless of what type of number you use in your code.
 
-    #If the document does not exist, it will be created. If the document does exist, its contents will be overwritten
-    #   unless you specify that the data should be merged into the existing document, as follows:
-    #   doc_ref.set(update_dict, merge=True)
-
+        #If the document does not exist, it will be created. If the document does exist, its contents will be overwritten
+        #   unless you specify that the data should be merged into the existing document, as follows:
+        #   doc_ref.set(update_dict, merge=True)
 
         collection_ref = self._db.collection(collection_id)
         if document_id is not None:
@@ -67,7 +63,6 @@ class FirebaseDB():
 
             return None
 
-
         collection_ref = self._db.collection(collection_id)
 
         recursion_query = collection_ref
@@ -98,7 +93,6 @@ class FirebaseDB():
                 logging.warn(f"Firestore: Tried to run a WHERE opperation with invalid comparator {query_dict['comparator']}!")
 
                 break
-
 
             if query_dict['comparator'] in comparators_that_need_unique_fields:
                 if query_dict['field'] not in unique_fields:
@@ -172,21 +166,21 @@ class FirebaseDB():
         doc_ref = collection_ref.document(document_id)
         
         #To delete specific fields from a document
-        doc_ref.update({field: firestore.DELETE_FIELD})
+        doc_ref.update({field: DELETE_FIELD})
 
 #Project-specific
     def save_unit(self, unit):
-        self._create(collection_id = 'units', document_id = unit.name, create_dict = unit.to_dict(), merge=True)
+        self._create(collection_id = 'units', document_id = unit._name, create_dict = unit.to_dict(), merge=True)
 
     def update_unit(self, unit):
         #This is unused, for now
-        self._update(collection_id = 'units', document_id = unit.name, update_dict = unit.to_dict())
+        self._update(collection_id = 'units', document_id = unit._name, update_dict = unit.to_dict())
 
     def get_unit_list_by_name(self, unit_name, game_version):
         #Firestore does not support what one might consider a %like% clause in WHERE
 
-        name_query_dict = {'field': 'name', 'comparator': '==','value': unit_name}
-        game_version_query_dict = {'field': 'game_version', 'comparator': '>=', 'value': game_version}
+        name_query_dict = {'field': '_name', 'comparator': '==','value': unit_name}
+        game_version_query_dict = {'field': '_game_version', 'comparator': '>=', 'value': game_version}
 
         query_dicts = [name_query_dict, game_version_query_dict]
 
@@ -196,16 +190,26 @@ class FirebaseDB():
 
         return self.unit_list
 
+    def get_unit_by_modpack_and_name(self, modpack_name, unit_name):
+        name_query_dict = {'field': '_name', 'comparator': '==','value': unit_name}
+        modpack_query_dict = {'field': '_modpack', 'comparator': '==', 'value': modpack_name}
+
+        query_dicts = [name_query_dict, modpack_query_dict]
+
+        fetched_data = self._docs_to_dicts(self._read_and(query_dicts, 'units'))
+
+        self.unit_list = [Unit.from_dict(data) for data in fetched_data]
+
+        if len(self.unit_list) > 0:
+            return self.unit_list[0]
+        else:
+            return None
+
     #These two aren't called because I don't see a need for them, but I wanted to include them to prove I could
     def add_ai_type(self, unit_name:str, ai_type:str):
         #union = append
-        self._update('units', unit_name, {u'ai_types' : firestore.ArrayUnion([ai_type])})
+        self._update('units', unit_name, {u'ai_types' : ArrayUnion([ai_type])})
 
     def remove_ai_type(self, unit_name:str, ai_type:str):
         #remove = remove()
-        self._update('units', unit_name, {u'ai_types' : firestore.ArrayRemove([ai_type])})
-
-#OTHER NOTES
-
-    #Increment a numeric value
-    #doc_ref.update({"population": firestore.Increment(50)})
+        self._update('units', unit_name, {u'ai_types' : ArrayRemove([ai_type])})
