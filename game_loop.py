@@ -16,7 +16,7 @@ import logging
 
 class GameLoop():
     def __init__(self) -> None:
-        self._database_controler = FirebaseDB()
+        
         
         self._ui_handler = TKUIHandler(self)
 
