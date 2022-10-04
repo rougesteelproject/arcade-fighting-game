@@ -88,11 +88,6 @@ class Unit:
         if self._game_version >= 3 and self._min_initiative == 0:
             print("min initiative must be greater than zero!")
             self._is_invalid_v3 = True
-
-    def _set_ai(self, ai_type):
-        if ai_type == 'basic':
-            from ais.basic_ai import BasicAI
-            return BasicAI(self)
         
     def get_max_initiative(self):
         return self._max_initiative
