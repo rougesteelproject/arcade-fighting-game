@@ -1,6 +1,6 @@
 import constants
 from battle_creator import BattleCreator
-from tk_ui_handler import TKUIHandler
+from arcade_ui_handler import MyGame
 
 from battle_coordinator import BattleCoordinator
 
@@ -16,9 +16,8 @@ import logging
 
 class GameLoop():
     def __init__(self) -> None:
-        
-        
-        self._ui_handler = TKUIHandler(self)
+
+        self._ui_handler = MyGame(self)
 
         self._sign_in_handler = SignInHandler()
 
