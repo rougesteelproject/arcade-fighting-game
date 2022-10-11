@@ -75,12 +75,12 @@ class GameLoop():
     def battle_creator_disable_initiative(self, use_initiative):
         pass
         #TODO
-        self._ui_handler.battle_creator_disable_initiative(use_initiative)
+        #self._ui_handler.battle_creator_disable_initiative(use_initiative)
 
     def battle_creator_disable_variance(self, use_variance):
         pass
         #TODO
-        self._ui_handler.battle_creator_disable_variance(use_variance)
+        #self._ui_handler.battle_creator_disable_variance(use_variance)
 
     def battle_creator_add_team(self, team_name):
         self._battle_creator._add_team(team_name)
@@ -91,7 +91,7 @@ class GameLoop():
     def battle_creator_add_team_ui(self):
         pass
         #TODO
-        self._ui_handler.battle_creator_add_team()
+        #self._ui_handler.battle_creator_add_team()
 
     def battle_creator_buy_unit(self, unit_index, team_name):
         unit = deepcopy(self._database_controler.unit_data_list[unit_index])

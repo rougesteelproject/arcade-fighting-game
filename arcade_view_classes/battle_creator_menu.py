@@ -18,7 +18,7 @@ class BattleCreatorMenu(arcade.View):
 
             self._battle_button = arcade.gui.UIFlatButton(text="Battle!", width=constants.MAIN_MENU_BUTTON_WIDTH)
 
-            self.__battle_button.on_click = self._battle
+            self._battle_button.on_click = self._battle
 
             self.v_box.add(self._battle_button)
 
@@ -46,7 +46,21 @@ class BattleCreatorMenu(arcade.View):
 
         self._ui_manager.draw()
 
-    def _battle(self):
+    def _battle(self, event):
+
+        game_version = constants.DEFAULT_GAME_VERSION
+        
+        results = self._game_loop.search_units_by_name("Sugar Ant", game_version)
+
+        self._buy_unit(0, "team_1")
+
+        results = self._game_loop.search_units_by_name("Sugar Ant", game_version)
+
+        self._buy_unit(0, "team_1")
+        
+        results = self._game_loop.search_units_by_name("Daddy Longlegs", game_version)
+
+        self._buy_unit(0, "team_2")
         
 
         self._game_loop.run_battle()
@@ -55,7 +69,7 @@ class BattleCreatorMenu(arcade.View):
         #team_name = self.buy_team_holder.get()
 
         try:
-            self._game_loop.battle_creator_buy_unit(unit_index, team_name))
+            self._game_loop.battle_creator_buy_unit(unit_index, team_name)
             #note that curselection only works if you've selected something, even if there's no other option
         except IndexError:
             logging.exception("Tried to buy a unit with none selected.")
@@ -64,11 +78,11 @@ class BattleCreatorMenu(arcade.View):
 
         #self.buy_team_holder.set(team_name)
 
-    def _get_search_results(self):
+    def _get_search_results(self, unit_name):
         #game_version = int(self.game_version_holder.get())
         game_version = constants.DEFAULT_GAME_VERSION
 
-        results = self._game_loop.search_units_by_name(self._search_bar_holder.get(), game_version)
+        results = self._game_loop.search_units_by_name(unit_name, game_version)
 
         unit_prompts = []
         

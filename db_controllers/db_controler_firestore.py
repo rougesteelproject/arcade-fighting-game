@@ -85,6 +85,8 @@ class FirebaseDB():
         #for example, I can't find units with more than X health and less than Y min_initiative
         #   Maybe you can get around this with 'in'
 
+        #TODO if ANY field needs a unique comparator, it's done for. No more fields
+
         unique_fields = []
         for query_dict in query_list:
             if query_dict['comparator'] not in valid_comparators:
@@ -129,17 +131,19 @@ class FirebaseDB():
         collection_ref = self._db.collection(collection_id)
         doc_ref = collection_ref.document(document_id)
 
-        if doc_ref.exists:
+        doc = doc_ref.get()
+
+        if doc.exists:
             # If there is no document at the location referenced by docRef,
             # the resulting document will be empty and calling exists on it will return false.
-            return doc_ref.to_dict()
+            return doc.to_dict()
         else:
             logging.warn(f"Tried to get a firebase doc named {document_id} which does not exist!")
             return None
 
-    def _docs_to_dicts(self, docs):
+    def _docs_to_dicts(self, doc):
         #call after read_all and read_where
-        dicts = [doc.to_dict() for doc in docs]
+        dicts = { el.id: el.to_dict() for el in doc }
 
         return dicts
 
@@ -179,17 +183,17 @@ class FirebaseDB():
 
     def get_unit_list_by_name(self, unit_name, game_version):
         #Firestore does not support what one might consider a %like% clause in WHERE
+        #It's impossible to search ig game version is above a cerian value and by name at the same time
+        #Because the name is the document name, it's redundant anyway.
 
-        name_query_dict = {'field': '_name', 'comparator': '==','value': unit_name}
-        game_version_query_dict = {'field': '_game_version', 'comparator': '>=', 'value': game_version}
+        unit_dict = self._read_single(unit_name, 'units')
 
-        query_dicts = [name_query_dict, game_version_query_dict]
+        if unit_dict['_game_version'] >= game_version:
+            self.unit_list = [unit_dict]
 
-        fetched_data = self._docs_to_dicts(self._read_and(query_dicts, 'units'))
-
-        self.unit_list = [Unit.from_dict(data) for data in fetched_data]
-
-        return self.unit_list
+            return self.unit_list
+        else:
+            return None
 
     def get_unit_by_modpack_and_name(self, modpack_name, unit_name):
         name_query_dict = {'field': '_name', 'comparator': '==','value': unit_name}

@@ -3,7 +3,7 @@ import arcade
 
 from arcade_view_classes.sign_in_menu import SignInMenu
 from arcade_view_classes.main_menu import MainMenu
-
+from arcade_view_classes.battle_creator_menu import BattleCreatorMenu
 
 class ArcadeUIHandler():
 
