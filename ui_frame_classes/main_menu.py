@@ -4,8 +4,7 @@ class MainMenu(tk.Frame):
     def __init__(self, callback_handler) -> None:
         super().__init__(callback_handler.top_level)
 
-        self._callback_handler = callback_handler
-        self._game_loop = self._callback_handler._game_loop
+        self._game_loop = callback_handler._game_loop
 
         self.button_battle = tk.Button(self)
         self.button_battle.configure(

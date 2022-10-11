@@ -1,6 +1,6 @@
 import constants
 from battle_creator import BattleCreator
-from arcade_ui_handler import MyGame
+from arcade_ui_handler import ArcadeUIHandler
 
 from battle_coordinator import BattleCoordinator
 
@@ -17,7 +17,7 @@ import logging
 class GameLoop():
     def __init__(self) -> None:
 
-        self._ui_handler = MyGame(self)
+        self._ui_handler = ArcadeUIHandler(self)
 
         self._sign_in_handler = SignInHandler()
 
@@ -41,7 +41,7 @@ class GameLoop():
 
             self._database_controler = FirebaseDB(credentials)
 
-            self.run_unit_creator_menu()
+            self.run_main_menu()
 
     def run_sign_in_prompt(self, error = None):
         self._ui_handler.create_sign_in_menu(error)
@@ -73,9 +73,13 @@ class GameLoop():
         self._ui_handler.battle_creator_create_switch_version_popup(outdated_list)
 
     def battle_creator_disable_initiative(self, use_initiative):
+        pass
+        #TODO
         self._ui_handler.battle_creator_disable_initiative(use_initiative)
 
     def battle_creator_disable_variance(self, use_variance):
+        pass
+        #TODO
         self._ui_handler.battle_creator_disable_variance(use_variance)
 
     def battle_creator_add_team(self, team_name):
@@ -85,6 +89,8 @@ class GameLoop():
         self._battle_creator._remove_team(team_index)
 
     def battle_creator_add_team_ui(self):
+        pass
+        #TODO
         self._ui_handler.battle_creator_add_team()
 
     def battle_creator_buy_unit(self, unit_index, team_name):
@@ -127,7 +133,8 @@ class GameLoop():
         self._battle_coordinator = BattleCoordinator(self._battle_creator._teams, self._battle_creator.use_initiative, self._battle_creator.use_variance)
         self._battle_coordinator.run_battle()
 
-        self._ui_handler.clear_screen()
-        self._ui_handler.top_level.destroy()
+        #TODO get rid of these two
+        #self._ui_handler.clear_screen()
+        #self._ui_handler.top_level.destroy()
 
 gameloop = GameLoop()

@@ -308,7 +308,7 @@ class BattleCreatorMenu(tk.Frame):
         team_name = self.buy_team_holder.get()
 
         try:
-            self._game_loop.battle_creator_buy_unit(self.listbox_search_results.curselection()[0], self.buy_team_holder.get())
+            self._game_loop.battle_creator_buy_unit(self.listbox_search_results.curselection()[0], team_name)
             #note that curselection only works if you've selected something, even if there's no other option
         except IndexError:
             logging.exception("Tried to buy a unit with none selected.")

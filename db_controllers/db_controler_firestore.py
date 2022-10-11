@@ -171,6 +171,7 @@ class FirebaseDB():
 #Project-specific
     def save_unit(self, unit):
         self._create(collection_id = 'units', document_id = unit._name, create_dict = unit.to_dict(), merge=True)
+        #TODO units should save their price whenever they are saved or stats update, so I don't have to do it every time it's loaded into the battle_creator
 
     def update_unit(self, unit):
         #This is unused, for now
