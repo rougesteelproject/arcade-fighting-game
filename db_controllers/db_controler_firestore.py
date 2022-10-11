@@ -186,12 +186,15 @@ class FirebaseDB():
         #It's impossible to search ig game version is above a cerian value and by name at the same time
         #Because the name is the document name, it's redundant anyway.
 
-        unit_dict = self._read_single(unit_name, 'units')
+        unit_dict = self._read_single('units', unit_name)
 
-        if unit_dict['_game_version'] >= game_version:
-            self.unit_list = [unit_dict]
+        if unit_dict is not None:
+            if unit_dict['_game_version'] >= game_version:
+                self.unit_data_list = [Unit.from_dict(unit_dict)]
 
-            return self.unit_list
+                return self.unit_data_list
+            else:
+                return None
         else:
             return None
 

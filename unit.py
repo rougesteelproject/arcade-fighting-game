@@ -28,24 +28,24 @@ class Unit:
         unit = Unit(name = source[u'_name'], base_health = source[u'_base_health'],  min_attack = source[u'_min_attack'], ai_types= source[u'_ai_types'], game_version= source[u'_game_version'], attack_verb= source['_attack_verb'])
         
         if u'_max_attack' in source:
-            unit._max_attack = source[u'_max_attack']
+            unit._max_attack = int(source[u'_max_attack'])
 
         if u'_min_initiative' in source:
-            unit._min_initiative = source[u'_min_initiative']
+            unit._min_initiative = float(source[u'_min_initiative'])
             if u'_max_initiative' in source:
-                unit._max_initiative = source[u'_max_initiative']
+                unit._max_initiative = float(source[u'_max_initiative'])
             else:
                 unit._max_initiative = unit._min_initiative
 
         if u'_raw_power_v3' in source:
-            unit.raw_power_v3 = source[u'_raw_power_v3']
+            unit.raw_power_v3 = int(source[u'_raw_power_v3'])
         
             
         if u'_raw_power_v2' in source:
-            unit.raw_power_v2 = source[u'_raw_power_v2']
+            unit.raw_power_v2 = int(source[u'_raw_power_v2'])
         
         if u'_raw_power_v1' in source:
-            unit.raw_power_v1 = source[u'_raw_power_v1']
+            unit.raw_power_v1 = int(source[u'_raw_power_v1'])
             
 
         return unit
@@ -109,11 +109,11 @@ class Unit:
 
     def _set_raw_power_v1(self):
         raw_power_v1  = (2 * (self._base_health + (5 * self._min_attack)) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
-        self.raw_power_v1 = self._round_one_minimum(raw_power_v1)
+        self._raw_power_v1 = self._round_one_minimum(raw_power_v1)
 
     def _set_raw_power_v2(self):
         raw_power_v2 = (2 * (self._base_health + (5 * self._min_attack * (self._max_initiative ** 1.1))) + 3 * ( ( math.sqrt(self._base_health* 5 * self._min_attack) ) * 2) ) / 5
-        self.raw_power_v2 = self._round_one_minimum(raw_power_v2)
+        self._raw_power_v2 = self._round_one_minimum(raw_power_v2)
 
     def _set_raw_power_v3(self):
         self._set_attack_value()
@@ -122,7 +122,7 @@ class Unit:
         self._offensive_power = self._attack_value * self._initiative_value *5
 
         raw_power_v3 = (2*(self._base_health + self._offensive_power) + 3*(math.sqrt(self._base_health * self._offensive_power) *2))/5
-        self.raw_power_v3 = self._round_one_minimum(raw_power_v3)
+        self._raw_power_v3 = self._round_one_minimum(raw_power_v3)
 
     def _set_raw_powers(self):
         
@@ -149,7 +149,7 @@ class Unit:
 
     def get_raw_power(self, game_version):
 
-        if self._game_version >= game_version and not hasattr(self, f'raw_power_v{game_version}'):
+        if self._game_version >= game_version and not hasattr(self, f'_raw_power_v{game_version}'):
             self._set_raw_powers()
 
         if game_version == 3:
@@ -184,7 +184,7 @@ class Unit:
         if self._current_health <= 0:
             self._is_alive = False
 
-            print(f'{self.name} on team {self.callback_team.name} has died.')
+            print(f'{self._name} on team {self.callback_team.name} has died.')
             self.callback_team.kill_unit(self)
 
     def take_damage(self, damage):

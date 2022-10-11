@@ -58,7 +58,7 @@ class BattleCreatorMenu(arcade.View):
 
         self._buy_unit(0, "team_1")
         
-        results = self._game_loop.search_units_by_name("Daddy Longlegs", game_version)
+        results = self._game_loop.search_units_by_name("Black Widow", game_version)
 
         self._buy_unit(0, "team_2")
         

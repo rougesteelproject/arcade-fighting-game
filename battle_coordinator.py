@@ -71,7 +71,7 @@ class BattleCoordinator():
                 if self._use_initiative:
                     active_unit.expend_initiative(self._initiative_threshold)
 
-                print(f'{active_unit.name} on team {active_unit.callback_team.name} {active_unit.attack_verb} {target.name} on team {target.callback_team.name} for {damage} damage!')
+                print(f'{active_unit._name} on team {active_unit.callback_team.name} {active_unit._attack_verb} {target._name} on team {target.callback_team.name} for {damage} damage!')
                 
                 target.take_damage(damage)
 
