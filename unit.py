@@ -1,12 +1,17 @@
+import arcade
+
 import logging
 import math
 from random import randint, uniform
+
 import constants
 
 #TODO add fields for "Modpack" and "Creator_Email"
 
-class Unit:
-    def __init__(self, name: str, base_health: int, min_attack: int, ai_types: list = ['basic'], game_version:float = 3, attack_verb:str = "attacked") -> None:
+class Unit(arcade.Sprite):
+    def __init__(self, name: str, base_health: int, min_attack: int, ai_types: list = ['basic'], game_version:float = 3, attack_verb:str = "attacked", filename:str = None) -> None:
+
+        super().__init__(filename=filename)
 
         self._name = name
 
@@ -52,6 +57,12 @@ class Unit:
 
     def to_dict(self):
         return self.__dict__
+
+    def setup(self, index, arena_slot, row):
+        self._current_health = self._base_health
+        self._initiative_bar = 0
+        self._is_alive = True
+        self._get_initial_position(index, arena_slot, row)
 
     def _check_stat_validity(self):
         #note to self, keep this consistent with unit_creator
@@ -125,6 +136,7 @@ class Unit:
         self._raw_power_v3 = self._round_one_minimum(raw_power_v3)
 
     def _set_raw_powers(self):
+        #TODO move this to the db_cont
         
         self._check_stat_validity()
         #this is for when a unit is created by db_cont
@@ -165,11 +177,11 @@ class Unit:
 
     def set_callback_team(self, callback_team):
         self.callback_team = callback_team
+        #TODO can I get the parent spritelist?
 
-    def combat_init(self):
-        self._current_health = self._base_health
-        self._initiative_bar = 0
-        self._is_alive = True
+    def _get_initial_position(self, index, arena_slot, row):
+        self.center_x = arena_slot['first_unit_center']['x'] + (arena_slot['unit_spacing']['x'] * index) + (arena_slot['row_spacing']['x'] * (row - 1))
+        self.center_y = arena_slot['first_unit_center']['y'] + (arena_slot['unit_spacing']['y'] * index) + (arena_slot['row_spacing']['y'] * (row - 1))
 
     def get_initiative_bar(self):
         return self._initiative_bar
@@ -185,7 +197,8 @@ class Unit:
             self._is_alive = False
 
             print(f'{self._name} on team {self.callback_team.name} has died.')
-            self.callback_team.kill_unit(self)
+
+            self.kill()
 
     def take_damage(self, damage):
         self._current_health -= damage

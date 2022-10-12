@@ -5,6 +5,7 @@ from unit import Unit
 import logging
 
 class BattleCreator():
+    #TODO merge with ui View class
     def __init__(self, callback) -> None:
         
         self._game_loop = callback

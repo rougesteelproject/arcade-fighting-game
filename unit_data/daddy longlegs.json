@@ -1,1 +1,0 @@
-{"name": "Daddy Longlegs", "base_health": 8, "min_attack": 1, "max_attack": 4, "min_initiative": 0.8, "max_initiative": 1.2, "ai_types": ["basic"], "game_version": 3, "raw_power_v1": 13, "raw_power_v2": 13, "raw_power_v3": 20, "attack_verb": "attacked"}

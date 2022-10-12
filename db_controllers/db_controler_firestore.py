@@ -5,6 +5,12 @@ from unit import Unit
 
 from google.cloud.firestore import Client, DELETE_FIELD, ArrayUnion, ArrayRemove
 
+#TODO trim this back down a bit. 
+#   Searching for names is redundant rn
+#   Search for modpacks
+#   Save sprite image filename to db
+#TODO save image to db, also
+
 class FirebaseDB():
     def __init__(self, credentials) -> None:
 

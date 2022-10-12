@@ -1,3 +1,4 @@
+from battle_coordinator import BattleCoordinator
 import constants
 import arcade
 
@@ -51,5 +52,9 @@ class ArcadeUIHandler():
         self._window.show_view(self._battle_creator_menu)
 
     #TODO the actual battle displayer
+    def create_battle_coordinator(self, teams, use_initiative, use_variance):
+        self._battle_coordinator = BattleCoordinator(self._window, use_initiative, use_variance)
+        self._window.show_view(self._battle_coordinator)
 
     #TODO Unit creator menu
+

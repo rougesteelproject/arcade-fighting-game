@@ -1,5 +1,8 @@
-class Team():
+import arcade
+
+class Team(arcade.SpriteList):
     def __init__(self, name) -> None:
+        super().__init__()
         self.name = name
         self.members = []
         self.cost = 0
@@ -32,8 +35,10 @@ class Team():
             self._remove_unit(unit_to_remove)
         self.cost -= unit_to_remove.get_raw_power(game_version)
 
-    def combat_init(self):
+    def setup(self, arena_slot):
+        self._arena_slot = arena_slot
         self._living_members = self.members
+        self.extend(self.members)
         self.dead_members = []
 
     def list_members_grouped(self):

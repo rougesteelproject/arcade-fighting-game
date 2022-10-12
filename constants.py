@@ -34,3 +34,15 @@ FIREBASE_API_KEY = "AIzaSyC_MNFuibE5GlmJMqLqEkrjgoAGt-4DRk8"
 FIREBASE_REST_API = "https://identitytoolkit.googleapis.com/v1/accounts"
 
 FIRESTORE_DB_NAME = "piono-pricing"
+
+ARENA_SLOT_1 = {
+    'first_unit_center': {'x': 10, 'y': 10},
+    'unit_spacing': {'x': 20, 'y': 0},
+    'row_spacing': {'x': 0, 'y': 20}
+}
+
+ARENA_SLOT_2 = {
+    'first_unit_center': {'x': 10, 'y': 50},
+    'unit_spacing': {'x': 20, 'y': 0},
+    'row_spacing': {'x': 0, 'y': 20}
+}

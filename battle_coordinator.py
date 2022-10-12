@@ -1,13 +1,33 @@
+import arcade
+
 from ais.basic_ai import BasicAI
 
-class BattleCoordinator():
-    def __init__(self, teams, use_initiative, use_variance) -> None:
+class BattleCoordinator(arcade.View):
+    def __init__(self, window: arcade.Window, teams, use_initiative, use_variance) -> None:
+        super().__init__(window)
         self._teams = teams
 
         self._victor = None
 
         self._use_initiative = use_initiative
         self._use_variance = use_variance
+
+    def setup(self):
+        self.background = arcade.load_texture("/backgrounds/map_13x13.png")
+
+    def on_draw(self):
+        arcade.draw_lrwh_rectangle_textured(0, 0,
+                                            SCREEN_WIDTH, SCREEN_HEIGHT,
+                                            self.background)
+
+        for team in self._teams:
+            team.draw()
+
+    #TODO change delta time
+    #TODO do I need this?
+    def on_update(self, delta_time: float):
+        self._do_game_tick()
+        return super().on_update(delta_time)
 
     def _roll_initiative(self):
         for unit in self._check_living_units():

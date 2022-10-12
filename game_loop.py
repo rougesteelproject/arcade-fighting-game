@@ -130,8 +130,7 @@ class GameLoop():
         self._battle_creator._run_battle()
 
     def run_battle(self):
-        self._battle_coordinator = BattleCoordinator(self._battle_creator._teams, self._battle_creator.use_initiative, self._battle_creator.use_variance)
-        self._battle_coordinator.run_battle()
+        self._ui_handler.create_battle_coordinator(self._battle_creator._teams, self._battle_creator.use_initiative, self._battle_creator.use_variance)
 
         #TODO get rid of these two
         #self._ui_handler.clear_screen()
