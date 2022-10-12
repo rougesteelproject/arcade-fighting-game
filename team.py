@@ -14,21 +14,12 @@ class Team(arcade.SpriteList):
     def _remove_unit(self, unit):
         self.members.remove(unit)
 
-    def kill_unit(self, unit):
-        if unit in self.members and unit in self._living_members:
-            self.dead_members.append(unit)
-            self._living_members.remove(unit)
-
-    def get_living_members(self):
-        return self._living_members
-
     def buy(self, unit, game_version, money_limit):
         if unit.get_raw_power(game_version) is not None:
 
             if self.cost + unit.get_raw_power(game_version) <= int(money_limit):
                 self._add_unit(unit)
                 self.cost += unit.get_raw_power(game_version)
-
 
     def sell(self, unit_to_remove, game_version):
         if unit_to_remove in self.members:
@@ -37,9 +28,7 @@ class Team(arcade.SpriteList):
 
     def setup(self, arena_slot):
         self._arena_slot = arena_slot
-        self._living_members = self.members
         self.extend(self.members)
-        self.dead_members = []
 
     def list_members_grouped(self):
 

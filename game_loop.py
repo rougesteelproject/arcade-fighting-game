@@ -95,6 +95,7 @@ class GameLoop():
 
     def battle_creator_buy_unit(self, unit_index, team_name):
         unit = deepcopy(self._database_controler.unit_data_list[unit_index])
+
         #Make a copy of the unit so it's not the same as the one in the db_cont
         self._battle_creator.buy_unit(unit, team_name)
 
@@ -131,9 +132,4 @@ class GameLoop():
 
     def run_battle(self):
         self._ui_handler.create_battle_coordinator(self._battle_creator._teams, self._battle_creator.use_initiative, self._battle_creator.use_variance)
-
-        #TODO get rid of these two
-        #self._ui_handler.clear_screen()
-        #self._ui_handler.top_level.destroy()
-
 gameloop = GameLoop()

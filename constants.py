@@ -46,3 +46,6 @@ ARENA_SLOT_2 = {
     'unit_spacing': {'x': 20, 'y': 0},
     'row_spacing': {'x': 0, 'y': 20}
 }
+
+HEALTH_INDICATOR_BAR_OFFSET = 32
+INITIATIVE_INDICATOR_BAR_OFFSET = -32

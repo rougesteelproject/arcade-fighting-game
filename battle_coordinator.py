@@ -2,6 +2,8 @@ import arcade
 
 from ais.basic_ai import BasicAI
 
+import constants
+
 class BattleCoordinator(arcade.View):
     def __init__(self, window: arcade.Window, teams, use_initiative, use_variance) -> None:
         super().__init__(window)
@@ -9,45 +11,42 @@ class BattleCoordinator(arcade.View):
 
         self._victor = None
 
+        self.bar_list = arcade.SpriteList()
+
         self._use_initiative = use_initiative
         self._use_variance = use_variance
 
     def setup(self):
-        self.background = arcade.load_texture("/backgrounds/map_13x13.png")
+        self.background = arcade.load_texture("./arcade_view_classes/backgrounds/map_13x13.png")
+
+        self._setup_teams()        
 
     def on_draw(self):
-        arcade.draw_lrwh_rectangle_textured(0, 0,
-                                            SCREEN_WIDTH, SCREEN_HEIGHT,
-                                            self.background)
+        arcade.draw_lrwh_rectangle_textured(0, 0, constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT, self.background)
 
         for team in self._teams:
             team.draw()
 
-    #TODO change delta time
-    #TODO do I need this?
-    def on_update(self, delta_time: float):
-        self._do_game_tick()
-        return super().on_update(delta_time)
+        self.run_battle()
 
     def _roll_initiative(self):
         for unit in self._check_living_units():
-            unit.roll_initiative(self._use_variance)
+            unit.roll_initiative(self._use_variance, self._initiative_threshold)
 
-    def _check_living_units(self):
-        living_units = []
+    def _get_living_units(self):
+        self._living_units = arcade.SpriteList()
+
         for team in self._teams:
-            living_units += team.get_living_members()
-        return living_units
+            self._living_units.extend(team.sprite_list)
 
     def _get_targets(self, attacking_unit):
-        living = self._check_living_units()
-        targets = [unit for unit in living if unit.callback_team != attacking_unit.callback_team]
+        targets = [unit for unit in self._living_units if unit.callback_team != attacking_unit.callback_team]
         return targets
 
     def _check_victory(self):
         potential_winners = self._teams
         for team in self._teams:
-            if not team.get_living_members():
+            if not team.sprite_list:
                 potential_winners.remove(team)
         if len(potential_winners) == 0:
             print("It\'s a draw!")
@@ -70,17 +69,30 @@ class BattleCoordinator(arcade.View):
 
     def _do_round(self):
         
+        if self._use_initiative:    
+            self._set_initiative_threshold()
+
         if self._use_initiative:
             self._roll_initiative()
 
-            active_units = sorted(self._check_living_units(), key=lambda active_unit: active_unit.get_initiative_bar(), reverse=True)
+            self.active_units = sorted(self._living_units, key=lambda active_unit: active_unit.get_current_initiative(), reverse=True)
         else:
-            active_units = self._check_living_units()
+            self.active_units = self._living_units()
             self._initiative_threshold = 0
 
-        for active_unit in active_units:
-            if self._use_initiative and active_unit.get_initiative_bar() >= self._initiative_threshold:
-                unit_can_attack = active_unit.get_is_alive()
+        for active_unit in self.active_units:
+            active_unit.health_indicator_bar.position = (
+                self.player_sprite.center_x,
+                self.player_sprite.center_y + constants.HEALTH_INDICATOR_BAR_OFFSET,
+            )
+            active_unit.initiative_indicator_bar.position = (
+                self.player_sprite.center_x,
+                self.player_sprite.center_y + constants.INITIATIVE_INDICATOR_BAR_OFFSET,
+            )
+
+            #Units remove themselves from spritelists as they die
+            if self._use_initiative and active_unit.get_current_initiative() >= self._initiative_threshold:
+                unit_can_attack = True
             else:
                 unit_can_attack = True
 
@@ -95,35 +107,29 @@ class BattleCoordinator(arcade.View):
                 
                 target.take_damage(damage)
 
-                if self._use_initiative:
-                    target.check_is_dead()
+        self._check_victory()
 
-                    self._check_victory()
+    def _setup_teams(self):
+        if len(self._teams) == 2:
+            #TODO account for the other sides of the hexagon
+            self._teams[0].setup(constants.ARENA_SLOT_1)
+            self._teams[1].setup(constants.ARENA_SLOT_1)
 
-        if self._use_initiative == False:
-            for active_unit in active_units:
-                active_unit.check_is_dead()
-
-            self._check_victory()
-
-    def _initialize_teams(self):
         for team in self._teams:
-            team.combat_init()
-            for unit in team.members:
-                unit.combat_init()
+            for index, unit in enumerate(team):
+                #Smallest multiple of 5 less than the index
+                row = (index // 5) * 5
+                unit.setup(index, team._arena_slot, row, self.bar_list)
+        self._get_living_units()
 
     def _set_initiative_threshold(self):
-        unit_list = self._check_living_units()
-        self._initiative_threshold = max([unit.get_max_initiative() for unit in unit_list])
+        self._initiative_threshold = max([unit.get_max_initiative() for unit in self._living_units])
+
+    def _declare_victor(self):
+        pass #TODO
 
     def run_battle(self):
         
-        self._initialize_teams()        
-
-        if self._use_initiative:    
-            self._set_initiative_threshold()
-
-        self._check_victory()
-
         while self._victor == None:
             self._do_round()
+        self._declare_victor()

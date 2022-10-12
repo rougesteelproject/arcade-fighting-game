@@ -196,6 +196,13 @@ class FirebaseDB():
 
         if unit_dict is not None:
             if unit_dict['_game_version'] >= game_version:
+                #TODO make this save and load from the db, instead
+                #TODO this will be confising, but it's the filename of the sprite's image
+                if unit_name == "Sugar Ant":
+                    unit_dict['filename'] = "./sprite_images/LandDreugh.png"
+                elif unit_name == "Black Widow":
+                    unit_dict['filename'] = "./sprite_images/Spider.png"
+                
                 self.unit_data_list = [Unit.from_dict(unit_dict)]
 
                 return self.unit_data_list
