@@ -27,10 +27,14 @@ class BattleCoordinator(arcade.View):
         for team in self._teams:
             team.draw()
 
+    def on_show_view(self):
+        """ Called when switching to this view"""
+        arcade.set_background_color(arcade.color.GRAY)
+
         self.run_battle()
 
     def _roll_initiative(self):
-        for unit in self._check_living_units():
+        for unit in self._living_units:
             unit.roll_initiative(self._use_variance, self._initiative_threshold)
 
     def _get_living_units(self):
@@ -81,20 +85,15 @@ class BattleCoordinator(arcade.View):
             self._initiative_threshold = 0
 
         for active_unit in self.active_units:
-            active_unit.health_indicator_bar.position = (
-                self.player_sprite.center_x,
-                self.player_sprite.center_y + constants.HEALTH_INDICATOR_BAR_OFFSET,
-            )
-            active_unit.initiative_indicator_bar.position = (
-                self.player_sprite.center_x,
-                self.player_sprite.center_y + constants.INITIATIVE_INDICATOR_BAR_OFFSET,
-            )
+            
 
             #Units remove themselves from spritelists as they die
             if self._use_initiative and active_unit.get_current_initiative() >= self._initiative_threshold:
                 unit_can_attack = True
-            else:
+            elif self._use_initiative == False:
                 unit_can_attack = True
+            else:
+                unit_can_attack = False
 
             if unit_can_attack and self._victor == None: 
                 game_data = {'targets' : self._get_targets(active_unit)}
@@ -107,13 +106,13 @@ class BattleCoordinator(arcade.View):
                 
                 target.take_damage(damage)
 
-        self._check_victory()
+                self._check_victory()
 
     def _setup_teams(self):
         if len(self._teams) == 2:
             #TODO account for the other sides of the hexagon
             self._teams[0].setup(constants.ARENA_SLOT_1)
-            self._teams[1].setup(constants.ARENA_SLOT_1)
+            self._teams[1].setup(constants.ARENA_SLOT_2)
 
         for team in self._teams:
             for index, unit in enumerate(team):

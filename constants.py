@@ -1,7 +1,10 @@
 GAME_NAME = """TIPS: TEXT-BASED INACCURATE PLAGARISM SIMULATOR"""
 
-SCREEN_WIDTH = 800
+BACKGROUND_SQUARES = {'width': 18,'height': 18}
+SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
+GRID_WIDTH = SCREEN_WIDTH/BACKGROUND_SQUARES['width']
+GRID_HEIGHT = SCREEN_HEIGHT/BACKGROUND_SQUARES['height']
 MAIN_MENU_BUTTON_WIDTH = 200
 
 INITIATIVE_NUMBER_OF_POSIBILITIES = 10
@@ -36,16 +39,18 @@ FIREBASE_REST_API = "https://identitytoolkit.googleapis.com/v1/accounts"
 FIRESTORE_DB_NAME = "piono-pricing"
 
 ARENA_SLOT_1 = {
-    'first_unit_center': {'x': 10, 'y': 10},
-    'unit_spacing': {'x': 20, 'y': 0},
-    'row_spacing': {'x': 0, 'y': 20}
+    'first_unit_center': {'x': (GRID_WIDTH)*5 + GRID_WIDTH, 'y': (GRID_HEIGHT*2)},
+    'unit_spacing': {'x': GRID_WIDTH, 'y': 0},
+    'row_spacing': {'x': 0, 'y': GRID_HEIGHT}
 }
 
 ARENA_SLOT_2 = {
-    'first_unit_center': {'x': 10, 'y': 50},
-    'unit_spacing': {'x': 20, 'y': 0},
-    'row_spacing': {'x': 0, 'y': 20}
+    'first_unit_center': {'x': (GRID_WIDTH)*5 - GRID_WIDTH, 'y': (GRID_HEIGHT*12) - GRID_HEIGHT},
+    'unit_spacing': {'x': GRID_WIDTH, 'y': 0},
+    'row_spacing': {'x': 0, 'y': GRID_HEIGHT}
 }
 
 HEALTH_INDICATOR_BAR_OFFSET = 32
 INITIATIVE_INDICATOR_BAR_OFFSET = -32
+ATTACK_ANIMATION_SPEED = 1
+DEFAULT_UNIT_SCALE = 0.25

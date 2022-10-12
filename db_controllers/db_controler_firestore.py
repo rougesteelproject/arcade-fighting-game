@@ -200,8 +200,12 @@ class FirebaseDB():
                 #TODO this will be confising, but it's the filename of the sprite's image
                 if unit_name == "Sugar Ant":
                     unit_dict['filename'] = "./sprite_images/LandDreugh.png"
+                    unit_dict['_scale'] = constants.DEFAULT_UNIT_SCALE
                 elif unit_name == "Black Widow":
                     unit_dict['filename'] = "./sprite_images/Spider.png"
+                    unit_dict['_scale'] = constants.DEFAULT_UNIT_SCALE/4
+
+                
                 
                 self.unit_data_list = [Unit.from_dict(unit_dict)]
 

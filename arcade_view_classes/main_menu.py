@@ -41,9 +41,7 @@ class MainMenu(arcade.View):
 
     def on_show_view(self):
         """ Called when switching to this view"""
-        arcade.set_background_color(arcade.color.WHITE)
-
-        # Create a box group to align the 'open' button in the center
+        arcade.set_background_color(arcade.color.GRAY)
         
 
     def on_hide_view(self):

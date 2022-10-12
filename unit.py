@@ -10,9 +10,9 @@ import constants
 #TODO add fields for "Modpack" and "Creator_Email"
 
 class Unit(arcade.Sprite):
-    def __init__(self, name: str, base_health: int, min_attack: int, ai_types: list = ['basic'], game_version:float = 3, attack_verb:str = "attacked", filename:str = None) -> None:
+    def __init__(self, name: str, base_health: int, min_attack: int, ai_types: list = ['basic'], game_version:float = 3, attack_verb:str = "attacked", filename:str = None, scale:float = None) -> None:
 
-        super().__init__(filename=filename)
+        super().__init__(filename=filename, scale=scale)
 
         self._name = name
 
@@ -31,7 +31,7 @@ class Unit(arcade.Sprite):
     @staticmethod
     def from_dict(source):
 
-        unit = Unit(name = source[u'_name'], base_health = source[u'_base_health'],  min_attack = source[u'_min_attack'], ai_types= source[u'_ai_types'], game_version= source[u'_game_version'], attack_verb= source['_attack_verb'], filename=source['filename'])
+        unit = Unit(name = source[u'_name'], base_health = source[u'_base_health'],  min_attack = source[u'_min_attack'], ai_types= source[u'_ai_types'], game_version= source[u'_game_version'], attack_verb= source['_attack_verb'], filename=source['filename'], scale=source['_scale'])
         
         if u'_max_attack' in source:
             unit._max_attack = int(source[u'_max_attack'])
@@ -227,13 +227,19 @@ class Unit(arcade.Sprite):
             roll = self._max_initiative
         self._current_initiative += roll
 
+        initiative_percent = (self._current_initiative / initiative_threshold)
+
+        if initiative_percent > 1:
+            initiative_percent = 1
+
         # Set the player's indicator bar fullness
-        self.initiative_indicator_bar.fullness = (
-            self._current_initiative / initiative_threshold
-        )
+        self.initiative_indicator_bar.fullness = initiative_percent
 
     def expend_initiative(self, initiative_threshold):
         self._current_initiative -= initiative_threshold
+
+        if self._current_initiative < 0:
+            self._current_initiative = 0
 
         # Set the player's indicator bar fullness
         self.initiative_indicator_bar.fullness = (
