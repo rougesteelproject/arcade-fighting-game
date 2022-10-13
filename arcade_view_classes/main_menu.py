@@ -59,10 +59,7 @@ class MainMenu(arcade.View):
 
     def _create_unit(self, event):
         pass
-        #TODO adjust gameloop?
-        self._game_loop.create_unit()
+        #self._game_loop.create_unit()
 
     def _exit_game(self, event):
-        pass
-        #TODO create game_loop.exit
         self._game_loop.exit()
