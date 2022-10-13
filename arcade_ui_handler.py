@@ -1,3 +1,4 @@
+from arcade_view_classes.victory_screen import VictoryScreen
 from battle_coordinator import BattleCoordinator
 import constants
 import arcade
@@ -16,24 +17,10 @@ class ArcadeUIHandler():
 
         arcade.set_background_color(arcade.color.AMAZON)
 
-        # If you have sprite lists, you should create them here,
-        # and set them to None
-
-    def setup(self):
-        """ Set up the game variables. Call to re-start the game. """
-        # Create your sprites and sprite lists here
-        pass
-
     def on_draw(self):
-        """
-        Render the screen.
-        """
-
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
-
-        # Call draw() on all your sprite lists below
 
     def run(self):
         arcade.run()
@@ -51,11 +38,17 @@ class ArcadeUIHandler():
         self._battle_creator_menu = BattleCreatorMenu(self._window, self._game_loop)
         self._window.show_view(self._battle_creator_menu)
 
-    #TODO the actual battle displayer
     def create_battle_coordinator(self, teams, use_initiative, use_variance):
-        self._battle_coordinator = BattleCoordinator(self._window, teams, use_initiative, use_variance)
+        self._battle_coordinator = BattleCoordinator(self._window, teams, use_initiative, use_variance, self._game_loop)
         self._battle_coordinator.setup()
         self._window.show_view(self._battle_coordinator)
 
-    #TODO Unit creator menu
+    def create_victory_screen(self, victor):
+        self._victory_screen = VictoryScreen(self._window, self._game_loop, victor)
+        self._window.show_view(self._victory_screen)
 
+    def exit(self):
+        arcade.close_window()
+        arcade.exit()
+
+    #TODO Unit creator menu

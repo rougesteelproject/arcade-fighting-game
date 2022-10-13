@@ -22,6 +22,12 @@ class BattleCreatorMenu(arcade.View):
 
             self.v_box.add(self._battle_button)
 
+            self._main_menu_button = arcade.gui.UIFlatButton(text="Main Menu", width=constants.MAIN_MENU_BUTTON_WIDTH)
+
+            self._main_menu_button.on_click = self._main_menu
+
+            self.v_box.add(self._main_menu_button)
+
             self._ui_manager.add(
                 arcade.gui.UIAnchorWidget(
                     anchor_x="center_x",
@@ -31,7 +37,7 @@ class BattleCreatorMenu(arcade.View):
 
     def on_show_view(self):
         """ Called when switching to this view"""
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color(arcade.color.GRAY)
 
         # Create a box group to align the 'open' button in the center
         
@@ -45,6 +51,9 @@ class BattleCreatorMenu(arcade.View):
         self.clear()
 
         self._ui_manager.draw()
+
+    def _main_menu(self, event):
+        self._game_loop.run_main_menu()
 
     def _battle(self, event):
 

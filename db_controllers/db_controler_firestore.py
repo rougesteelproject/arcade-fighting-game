@@ -203,7 +203,8 @@ class FirebaseDB():
                     unit_dict['_scale'] = constants.DEFAULT_UNIT_SCALE
                 elif unit_name == "Black Widow":
                     unit_dict['filename'] = "./sprite_images/Spider.png"
-                    unit_dict['_scale'] = constants.DEFAULT_UNIT_SCALE/4
+                    unit_dict['_base_health'] = 500
+                    unit_dict['_scale'] = constants.DEFAULT_UNIT_SCALE/2
 
                 
                 

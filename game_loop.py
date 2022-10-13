@@ -2,8 +2,6 @@ import constants
 from battle_creator import BattleCreator
 from arcade_ui_handler import ArcadeUIHandler
 
-from battle_coordinator import BattleCoordinator
-
 from db_controllers.db_controler_firestore import FirebaseDB
 
 from copy import deepcopy
@@ -132,4 +130,11 @@ class GameLoop():
 
     def run_battle(self):
         self._ui_handler.create_battle_coordinator(self._battle_creator._teams, self._battle_creator.use_initiative, self._battle_creator.use_variance)
+
+    def declare_victor(self, victor):
+        self._ui_handler.create_victory_screen(victor)
+
+    def exit(self):
+        self._ui_handler.exit()
+
 gameloop = GameLoop()

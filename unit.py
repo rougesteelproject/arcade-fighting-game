@@ -62,7 +62,6 @@ class Unit(arcade.Sprite):
     def setup(self, index, arena_slot, row, bar_list):
         self._current_health = self._base_health
         self._current_initiative = 0
-        self._is_alive = True
         self._get_initial_position(index, arena_slot, row)
         self.health_indicator_bar: IndicatorBar = IndicatorBar(
             self, bar_list, (self.center_x, self.center_y)
@@ -70,6 +69,10 @@ class Unit(arcade.Sprite):
         self.initiative_indicator_bar: IndicatorBar = IndicatorBar(
             self, bar_list, (self.center_x, self.center_y)
         )
+
+        self._animate = False
+
+        self._color_timer = 0.0
 
     def _check_stat_validity(self):
         #note to self, keep this consistent with unit_creator
@@ -191,6 +194,9 @@ class Unit(arcade.Sprite):
         self.center_x = arena_slot['first_unit_center']['x'] + (arena_slot['unit_spacing']['x'] * index) + (arena_slot['row_spacing']['x'] * (row))
         self.center_y = arena_slot['first_unit_center']['y'] + (arena_slot['unit_spacing']['y'] * index) + (arena_slot['row_spacing']['y'] * (row ))
 
+        self.starting_x = self.center_x
+        self.starting_y = self.center_y
+
     def get_current_initiative(self):
         return self._current_initiative
 
@@ -202,13 +208,14 @@ class Unit(arcade.Sprite):
 
     def _check_is_dead(self):
         if self._current_health <= 0:
-            self._is_alive = False
+            self.kill()
 
             print(f'{self._name} on team {self.callback_team.name} has died.')
 
-            self.kill()
-
     def take_damage(self, damage):
+
+        self.color = arcade.csscolor.RED
+
         self._current_health -= damage
 
         # Set the player's indicator bar fullness
@@ -246,10 +253,68 @@ class Unit(arcade.Sprite):
             self._current_initiative / initiative_threshold
         )
 
-    def do_game_tick(self, targets, use_variance):
-        damage, target = self._ai.do_game_tick(targets, use_variance)
+    def on_update(self, delta_time):
+        if self._animate:
+            if self._animate_hit:
+                self.hit_target()
+            elif self._animate_return:
+                self.return_to_position()
+
+        self._color_timer += delta_time
+
+        if self._color_timer > constants.DELTA_TIME:
+            self._color_timer = 0.0
+            self.color = arcade.csscolor.WHITE
             
-        return damage, target
+
+        self.health_indicator_bar.position = (
+            self.center_x,
+            self.center_y + constants.HEALTH_INDICATOR_BAR_OFFSET,
+        )
+
+        self.initiative_indicator_bar.position = (
+            self.center_x,
+            self.center_y + constants.INITIATIVE_INDICATOR_BAR_OFFSET,
+        )
+
+
+    def attack_animation(self, target):
+        self._animate = True
+        self._animate_hit = True
+        self._animate_target = target
+        self._animate_return = False
+
+    def hit_target(self):
+        if self.center_y < self._animate_target.center_y:
+            self.center_y += min(constants.ATTACK_ANIMATION_SPEED, self._animate_target.center_y - self.center_y)
+        elif self.center_y > self._animate_target.center_y:
+            self.center_y -= min(constants.ATTACK_ANIMATION_SPEED, self.center_y - self._animate_target.center_y)
+
+        if self.center_x < self._animate_target.center_x:
+            self.center_x += min(constants.ATTACK_ANIMATION_SPEED, self._animate_target.center_x - self.center_x)
+        elif self.center_x > self._animate_target.center_x:
+            self.center_x -= min(constants.ATTACK_ANIMATION_SPEED, self.center_x - self._animate_target.center_x)
+
+        if self.center_x == self._animate_target.center_x and self.center_y == self._animate_target.center_y:
+            self._animate_hit = False
+            self._animate_return = True
+
+    def return_to_position(self):
+        if self.center_y < self.starting_y:
+            self.center_y += min(constants.ATTACK_ANIMATION_SPEED, self.starting_y - self.center_y)
+        elif self.center_y > self.starting_y:
+            self.center_y -= min(constants.ATTACK_ANIMATION_SPEED, self.center_y - self.starting_y)
+
+        if self.center_x < self.starting_x:
+            self.center_x += min(constants.ATTACK_ANIMATION_SPEED, self.starting_x - self.center_x)
+        elif self.center_x > self.starting_x:
+            self.center_x -= min(constants.ATTACK_ANIMATION_SPEED, self.center_x - self.starting_x)
+
+        if self.center_x == self.starting_x and self.center_y == self.starting_y:
+            self._animate_return = False
+            self._animate = False
+        
+
 
 #This has to be here to prevent circular imports
 class IndicatorBar:
