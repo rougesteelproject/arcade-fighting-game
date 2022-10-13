@@ -4,9 +4,7 @@ This game is part of an ongoing project to create a more consistent pricing sche
 
 The game can't technically be played, in that it plays itself. After clicking 'Battle!' a second time, two teams are created: one with a Black Widow, another with a pair of Sugar Ants. You may then watch them fight.
 
-{Provide a link to your YouTube demonstration.  It should be a 4-5 minute demo of the game being played and a walkthrough of the code.}
-
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/yH-MyHaAsmo)
 
 # Development Environment
 
