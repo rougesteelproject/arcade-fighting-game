@@ -1,7 +1,7 @@
 import constants
 
 from team import Team
-from unit import Unit
+
 import logging
 
 class BattleCreator():
